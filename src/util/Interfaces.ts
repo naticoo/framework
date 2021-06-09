@@ -1,7 +1,10 @@
+import { DiscordenoMessage } from "../../deps.ts";
 export interface Events {
-	[name: string]: (...args: any[]) => Promise<any> | any;
+  [name: string]: (...args: any[]) => Promise<any> | any;
 }
 export interface ConvertedOptions {
-	[name: string]: string;
+  [name: string]: string;
 }
-export type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
+export interface prefixFn {
+  (message: DiscordenoMessage): string | string[] | Promise<string | string[]>;
+}

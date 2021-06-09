@@ -1,15 +1,15 @@
-import { Embed } from './Embed.ts';
-import { NaticoClient } from '../struct/NaticoClient.ts';
+import { Embed } from "./Embed.ts";
+import { NaticoClient } from "../struct/NaticoClient.ts";
 
 export class ClientUtil {
-	client: NaticoClient;
-	constructor(client: NaticoClient) {
-		this.client = client;
-	}
-	/**
+  client: NaticoClient;
+  constructor(client: NaticoClient) {
+    this.client = client;
+  }
+  /**
 	 * @returns a sneaky embed
 	 */
-	embed() {
-		return new Embed();
-	}
+  embed() {
+    return new Embed();
+  }
 }
