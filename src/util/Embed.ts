@@ -2,7 +2,12 @@
  * Code taken from https://github.com/discordeno/template/blob/main/src/utils/Embed.ts not modified
  */
 
-import { EmbedAuthor, EmbedField, EmbedFooter, EmbedImage } from '../deps.ts';
+import {
+	EmbedAuthor,
+	EmbedField,
+	EmbedFooter,
+	EmbedImage,
+} from '../../deps.ts';
 const embedLimits = {
 	title: 256,
 	description: 2048,
