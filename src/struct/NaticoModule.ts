@@ -1,12 +1,10 @@
 import { NaticoClient, NaticoHandler } from './mod.ts';
-import { EventEmitter } from '../util/EventEmitter.ts';
-export class NaticoModule extends EventEmitter {
+export class NaticoModule {
 	handler!: NaticoHandler;
 	client!: NaticoClient;
 	id: string;
 	filepath!: string;
 	constructor(id: string) {
-		super();
 		this.id = id;
 		this.filepath;
 		this.handler;

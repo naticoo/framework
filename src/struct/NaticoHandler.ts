@@ -1,5 +1,5 @@
-import { Collection } from '../../deps.ts';
-import { EventEmitter, NaticoClient, NaticoModule } from '../mod.ts';
+import { Collection, EventEmitter } from '../../deps.ts';
+import { NaticoClient, NaticoModule } from '../mod.ts';
 
 export abstract class NaticoHandler extends EventEmitter {
 	client: NaticoClient;

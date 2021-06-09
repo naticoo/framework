@@ -1,6 +1,6 @@
-import { startBot } from '../../deps.ts';
+import { startBot, EventEmitter } from '../../deps.ts';
 import { Events } from '../mod.ts';
-import { EventEmitter, ClientUtil } from '../util/mod.ts';
+import { ClientUtil } from '../util/mod.ts';
 export class NaticoClient extends EventEmitter {
 	public events: Events;
 	public util!: ClientUtil;
