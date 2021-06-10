@@ -14,7 +14,7 @@ export class NaticoClient extends EventEmitter {
 	 * @param event Add a event to be emitted
 	 */
   addEvent(event: string) {
-    this.events[event] = (...args: any[]) => this.emit(event, args);
+    this.events[event] = (...args: any[]) => this.emit(event, ...args);
   }
   /**
 	 *

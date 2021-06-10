@@ -8,3 +8,12 @@ export interface ConvertedOptions {
 export interface prefixFn {
   (message: DiscordenoMessage): string | string[] | Promise<string | string[]>;
 }
+export enum ArgumentTypes {
+  string = 3,
+  interger = 4,
+  boolean = 5,
+  user = 6,
+  channel = 7,
+  subCommand = 1,
+  subCOmmandGroup = 2,
+}

@@ -16,6 +16,8 @@ export class NaticoCommandHandler extends NaticoHandler {
   superusers: string[];
   guildonly: boolean;
   prefix: prefixFn | string | string[];
+  handleEdits: boolean;
+  // handleSlashes: boolean;
   constructor(
     client: NaticoClient,
     {
@@ -26,26 +28,32 @@ export class NaticoCommandHandler extends NaticoHandler {
       cooldown = 5000,
       superusers = [],
       guildonly = false,
-    }: {
-      directory?: string;
-      prefix?: prefixFn | string | string[];
-      IgnoreCD?: string[];
-      owners?: string[];
-      /**
+      handleEdits = false,
+    }: // handleSlashes = true,
+      {
+        directory?: string;
+        prefix?: prefixFn | string | string[];
+        IgnoreCD?: string[];
+        owners?: string[];
+        /**
 			 * cooldown in millieseconds
 			 */
-      cooldown?: number;
-      rateLimit?: number;
-      superusers?: string[];
-      /**
+        cooldown?: number;
+        rateLimit?: number;
+        superusers?: string[];
+        /**
 			 * Commands will only work in guild channels with this on
 			 */
-      guildonly?: boolean;
-    },
+        guildonly?: boolean;
+        handleEdits?: boolean;
+        // handleSlashes?: boolean;
+      },
   ) {
     super(client, {
       directory,
     });
+    // this.handleSlashes = handleSlashes;
+    this.handleEdits = handleEdits;
     this.client = client;
     this.prefix = prefix;
     this.owners = owners;
@@ -58,6 +66,19 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.start();
   }
   start() {
+    if (this.handleEdits) {
+      this.client.addEvent("messageUpdate");
+      this.client.on("messageUpdate", ([message]) => {
+        return this.handleCommand(message as DiscordenoMessage);
+      });
+    }
+    // if (this.handleSlashes) {
+    // 	this.client.addEvent('interactionCreate');
+    // 	this.client.on('interactionCreate', ([data]) => {
+    // 		if (data.type === DiscordInteractionTypes.ApplicationCommand)
+    // 			return this.handleSlashCommand(message as DiscordenoMessage);
+    // 	});
+    // }
     this.client.addEvent("messageCreate");
     this.client.on("messageCreate", ([message]) => {
       return this.handleCommand(message as DiscordenoMessage);
@@ -272,5 +293,13 @@ export class NaticoCommandHandler extends NaticoHandler {
       commands.push(slashdata);
     });
     return commands;
+  }
+  handleSlashCommand(interaction) {
+    let args: ConvertedOptions = {};
+    for (const option of interaction.data?.options) {
+      if (option?.value) {
+        args[option.name] = option.value;
+      }
+    }
   }
 }
