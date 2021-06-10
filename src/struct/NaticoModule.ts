@@ -1,4 +1,5 @@
-import { NaticoClient, NaticoHandler } from "./mod.ts";
+import { NaticoClient } from "./NaticoClient.ts";
+import { NaticoHandler } from "./NaticoHandler.ts";
 export class NaticoModule {
   handler!: NaticoHandler;
   client!: NaticoClient;

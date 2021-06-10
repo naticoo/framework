@@ -1,5 +1,7 @@
+import { NaticoClient } from "../NaticoClient.ts";
+import { NaticoHandler } from "../NaticoHandler.ts";
+import { NaticoTask } from "./Task.ts";
 import { Collection } from "../../../deps.ts";
-import { NaticoClient, NaticoHandler, NaticoTask } from "../mod.ts";
 export class NaticoTaskHandler extends NaticoHandler {
   declare modules: Collection<string, NaticoTask>;
   directory: string;

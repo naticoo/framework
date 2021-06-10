@@ -1,10 +1,11 @@
-import { NaticoClient, NaticoCommand } from "../mod.ts";
+import { NaticoClient } from "../NaticoClient.ts";
+import { NaticoCommand } from "./Command.ts";
 import {
   Lexer,
   longShortStrategy,
   Parser,
 } from "https://cdn.skypack.dev/lexure?dts";
-import { Matches } from "../../mod.ts";
+import { Matches } from "../../util/Interfaces.ts";
 import { DiscordenoMessage } from "../../../deps.ts";
 export class ArgumentGenerator {
   client: NaticoClient;

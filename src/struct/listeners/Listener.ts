@@ -1,5 +1,7 @@
-import { NaticoModule } from "../mod.ts";
+import { NaticoModule } from "../NaticoModule.ts";
+import { NaticoListenerHandler } from "./ListenerHandler.ts";
 export class NaticoListener extends NaticoModule {
+  declare handler!: NaticoListenerHandler;
   event: string;
   emitter: string;
   constructor(

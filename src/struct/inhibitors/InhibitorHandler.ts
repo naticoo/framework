@@ -1,9 +1,7 @@
-import {
-  NaticoClient,
-  NaticoCommand,
-  NaticoHandler,
-  NaticoInhibitor,
-} from "../mod.ts";
+import { NaticoClient } from "../NaticoClient.ts";
+import { NaticoCommand } from "../commands/Command.ts";
+import { NaticoHandler } from "../NaticoHandler.ts";
+import { NaticoInhibitor } from "./Inhibitor.ts";
 import { Collection, DiscordenoMessage } from "../../../deps.ts";
 export class NaticoInhibitorHandler extends NaticoHandler {
   declare modules: Collection<string, NaticoInhibitor>;

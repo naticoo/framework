@@ -1,5 +1,7 @@
 import { DiscordenoMessage } from "../../../deps.ts";
-import { NaticoCommand, NaticoInhibitorHandler, NaticoModule } from "../mod.ts";
+import { NaticoModule } from "../NaticoModule.ts";
+import { NaticoInhibitorHandler } from "./InhibitorHandler.ts";
+import { NaticoCommand } from "../commands/Command.ts";
 export class NaticoInhibitor extends NaticoModule {
   declare handler: NaticoInhibitorHandler;
   priority: number;

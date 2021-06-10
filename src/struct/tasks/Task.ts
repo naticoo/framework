@@ -1,4 +1,5 @@
-import { NaticoModule, NaticoTaskHandler } from "../mod.ts";
+import { NaticoTaskHandler } from "./NaticoTaskHandler";
+import { NaticoModule } from "../NaticoModule.ts";
 export class NaticoTask extends NaticoModule {
   declare handler: NaticoTaskHandler;
   delay?: number;

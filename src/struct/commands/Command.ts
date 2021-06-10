@@ -1,10 +1,7 @@
-import { ApplicationCommandOption, PermissionStrings } from "../../../deps.ts";
-import {
-  ArgOptions,
-  ConvertedOptions,
-  NaticoCommandHandler,
-  NaticoModule,
-} from "../../mod.ts";
+import { Message, PermissionStrings } from "../../../deps.ts";
+import { NaticoModule } from "../NaticoModule.ts";
+import { NaticoCommandHandler } from "./CommandHandler.ts";
+import { ArgOptions, ConvertedOptions } from "../../util/Interfaces.ts";
 export class NaticoCommand extends NaticoModule {
   declare handler: NaticoCommandHandler;
   id: string;

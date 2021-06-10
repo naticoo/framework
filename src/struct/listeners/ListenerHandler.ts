@@ -1,6 +1,7 @@
+import { NaticoClient } from "../NaticoClient.ts";
+import { NaticoHandler } from "../NaticoHandler.ts";
+import { NaticoListener } from "./Listener.ts";
 import { Collection } from "../../../deps.ts";
-import { NaticoClient, NaticoHandler, NaticoListener } from "../mod.ts";
-
 export class NaticoListenerHandler extends NaticoHandler {
   declare modules: Collection<string, NaticoListener>;
   emitters: Collection<string, any>;

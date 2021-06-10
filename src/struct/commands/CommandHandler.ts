@@ -6,14 +6,12 @@ import {
   hasGuildPermissions,
   upsertSlashCommands,
 } from "../../../deps.ts";
-import {
-  ArgumentGenerator,
-  NaticoClient,
-  NaticoCommand,
-  NaticoHandler,
-  NaticoInhibitorHandler,
-} from "../mod.ts";
-import { ConvertedOptions, prefixFn } from "../../util/mod.ts";
+import { NaticoClient } from "../NaticoClient.ts";
+import { ArgumentGenerator } from "./ArgumentGenerator.ts";
+import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
+import { NaticoCommand } from "./Command.ts";
+import { NaticoHandler } from "../NaticoHandler.ts";
+import { ConvertedOptions, prefixFn } from "../../util/Interfaces.ts";
 export class NaticoCommandHandler extends NaticoHandler {
   modules: Collection<string, NaticoCommand>;
   cooldowns: Set<string>;
@@ -72,7 +70,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.cooldowns = new Set();
     this.guildonly = guildonly;
     this.modules = new Collection();
-    this.generator = new ArgumentGenerator(this);
+    this.generator = new ArgumentGenerator(this.client);
     this.start();
   }
   start() {
