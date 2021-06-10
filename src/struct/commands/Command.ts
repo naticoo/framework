@@ -1,5 +1,6 @@
 import { ApplicationCommandOption, PermissionStrings } from "../../../deps.ts";
 import {
+  ArgOptions,
   ConvertedOptions,
   NaticoCommandHandler,
   NaticoModule,
@@ -17,7 +18,7 @@ export class NaticoCommand extends NaticoModule {
   slash: boolean | undefined;
   enabled: boolean | undefined;
   superUserOnly: boolean | undefined;
-  options?: ApplicationCommandOption[];
+  options?: ArgOptions[];
   permissions: PermissionStrings[] | undefined;
 
   constructor(
@@ -36,7 +37,7 @@ export class NaticoCommand extends NaticoModule {
       options,
       permissions,
     }: {
-      options?: ApplicationCommandOption[];
+      options?: ArgOptions[];
 
       name?: string;
       aliases?: string[];

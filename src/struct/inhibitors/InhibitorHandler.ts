@@ -1,32 +1,32 @@
 import {
-	NaticoHandler,
-	NaticoClient,
-	NaticoInhibitor,
-	NaticoCommand,
-} from '../mod.ts';
-import { Collection, DiscordenoMessage } from '../../../deps.ts';
+  NaticoClient,
+  NaticoCommand,
+  NaticoHandler,
+  NaticoInhibitor,
+} from "../mod.ts";
+import { Collection, DiscordenoMessage } from "../../../deps.ts";
 export class NaticoInhibitorHandler extends NaticoHandler {
-	declare modules: Collection<string, NaticoInhibitor>;
-	directory: string;
+  declare modules: Collection<string, NaticoInhibitor>;
+  directory: string;
 
-	constructor(client: NaticoClient, { directory }: { directory: string }) {
-		super(client, {
-			directory,
-		});
-		this.directory = directory;
-		this.modules = new Collection();
-	}
-	async runChecks(
-		message: DiscordenoMessage,
-		command: NaticoCommand
-	): Promise<boolean> {
-		const inhibitors = [...this.modules.entries()].sort(
-			(a, b) => b[1].priority - a[1].priority
-		);
-		for await (const [, inhibitor] of inhibitors) {
-			if (await inhibitor.exec(message, command)) return true;
-			else continue;
-		}
-		return false;
-	}
+  constructor(client: NaticoClient, { directory }: { directory: string }) {
+    super(client, {
+      directory,
+    });
+    this.directory = directory;
+    this.modules = new Collection();
+  }
+  async runChecks(
+    message: DiscordenoMessage,
+    command: NaticoCommand,
+  ): Promise<boolean> {
+    const inhibitors = [...this.modules.entries()].sort(
+      (a, b) => b[1].priority - a[1].priority,
+    );
+    for await (const [, inhibitor] of inhibitors) {
+      if (await inhibitor.exec(message, command)) return true;
+      else continue;
+    }
+    return false;
+  }
 }
