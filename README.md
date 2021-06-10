@@ -1,6 +1,6 @@
 <img align="right" src="https://avatars.githubusercontent.com/u/85624930?s=200&v=4" height="150px">
 
-Discord API library for [Discordeno](https://github.com/discordeno/discordeno)
+This is a framework for [Discordeno](https://github.com/discordeno/discordeno)
 
 [![Discord](https://img.shields.io/discord/748956745409232945?color=7289da&logo=discord&logoColor=dark)](https://discord.gg/KkMKCchJb8)
 
