@@ -19,7 +19,7 @@ const embedLimits = {
   total: 6000,
 };
 
-export class Embed {
+export class NaticoEmbed {
   /** The amount of characters in the embed. */
   currentTotal = 0;
   /** Whether the limits should be enforced or not. */

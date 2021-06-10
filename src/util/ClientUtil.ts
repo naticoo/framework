@@ -1,4 +1,4 @@
-import { Embed } from "./Embed.ts";
+import { NaticoEmbed } from "./Embed.ts";
 import { NaticoClient } from "../struct/NaticoClient.ts";
 
 export class ClientUtil {
@@ -10,6 +10,6 @@ export class ClientUtil {
 	 * @returns a sneaky embed
 	 */
   embed() {
-    return new Embed();
+    return new NaticoEmbed();
   }
 }
