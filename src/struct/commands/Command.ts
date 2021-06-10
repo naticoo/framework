@@ -1,4 +1,4 @@
-import { Message, PermissionStrings } from "../../../deps.ts";
+import { DiscordenoMessage, PermissionStrings } from "../../../deps.ts";
 import { NaticoModule } from "../NaticoModule.ts";
 import { NaticoCommandHandler } from "./CommandHandler.ts";
 import { ArgOptions, ConvertedOptions } from "../../util/Interfaces.ts";
@@ -73,7 +73,7 @@ export class NaticoCommand extends NaticoModule {
 
     this.category = category || "general";
   }
-  exec(_message: Message, _options: ConvertedOptions) {
+  exec(_message: DiscordenoMessage, _options: ConvertedOptions) {
     throw new Error(`NOT_CREATED ${this.id}`);
   }
 }

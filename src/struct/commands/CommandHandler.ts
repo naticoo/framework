@@ -312,8 +312,8 @@ export class NaticoCommandHandler extends NaticoHandler {
     });
     return commands;
   }
-  handleSlashCommand(interaction) {
-    let args: ConvertedOptions = {};
+  handleSlashCommand(interaction: any) {
+    const args: ConvertedOptions = {};
     for (const option of interaction.data?.options) {
       if (option?.value) {
         args[option.name] = option.value;
