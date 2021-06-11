@@ -24,7 +24,7 @@ class BotClient extends NaticoClient {
     return this.login(token);
   }
 }
-const botClient = new BotClient();
+const botClient = new BotClient({ intents: ["Guilds", "GuildMessages", "GuildVoiceStates"] });
 botClient.start(token);
 ```
 

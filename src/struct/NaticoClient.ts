@@ -1,15 +1,14 @@
-import { botId, EventEmitter, startBot } from "../../deps.ts";
+import { BotConfig, botId, EventEmitter, startBot } from "../../deps.ts";
 import { Events } from "../util/Interfaces.ts";
 import { ClientUtil } from "../util/ClientUtil.ts";
 export class NaticoClient extends EventEmitter {
-  public events: Events;
-  public util!: ClientUtil;
-  public id: BigInt;
-  constructor({ util = false }: { util?: boolean }) {
+  events: Events = {};
+  util!: ClientUtil;
+  id = botId;
+  constructor(public config?: NaticoClientOptions) {
     super();
     this.events = {};
-    this.id = botId;
-    if (util) this.util = new ClientUtil(this);
+    if (this.config?.util) this.util = new ClientUtil(this);
   }
   /**
    *
@@ -23,11 +22,16 @@ export class NaticoClient extends EventEmitter {
    * @param token The token used for logging in
    * @returns
    */
-  login(token: string) {
-    return startBot({
+  async login(token = this.config?.token) {
+    if (!token) throw new Error("TOKEN_NOT_PROVIDED");
+    await startBot({
       token,
-      intents: ["Guilds", "GuildMessages", "GuildVoiceStates"],
+      intents: this.config?.intents ?? [],
       eventHandlers: this.events,
     });
   }
+}
+
+export interface NaticoClientOptions extends BotConfig {
+  util?: boolean;
 }
