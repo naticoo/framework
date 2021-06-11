@@ -1,16 +1,16 @@
 <img align="right" src="https://avatars.githubusercontent.com/u/85624930?s=200&v=4" height="150px">
 
+# Natico
+
 This is a framework for [Discordeno](https://github.com/discordeno/discordeno)
 
 [![Discord](https://img.shields.io/discord/748956745409232945?color=7289da&logo=discord&logoColor=dark)](https://discord.gg/KkMKCchJb8)
+[![lines](https://img.shields.io/tokei/lines/github/naticoo/framework?color=7289da&logo=superuser&logoColor=dark)](https://deno.land/x/natico)
 
-Simple setup
+## Simple setup
 
 ```ts
-import {
-  NaticoClient,
-  NaticoCommandHandler,
-} from "https://deno.land/x/natico@0.1.1/mod.ts";
+import { NaticoClient, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
 class BotClient extends NaticoClient {
   constructor() {
     super({});
@@ -27,6 +27,16 @@ class BotClient extends NaticoClient {
 const botClient = new BotClient();
 botClient.start(token);
 ```
+
+### Features
+
+- flexible
+  - Natico is built using classes allowing you to extend everything and add features to your liking
+- Command handling
+  - Natico has great command handling with slash command support on its way
+- Listeners
+  - Natico comes included with a listener(events) handler which makes it very easy to use events
+- And much more
 
 Natico is designed to be a very low level and extendable framework for
 [Discordeno](https://github.com/discordeno/discordeno)
