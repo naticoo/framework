@@ -10,10 +10,10 @@ This is a framework for [Discordeno](https://github.com/discordeno/discordeno)
 ## Simple setup
 
 ```ts
-import { NaticoClient, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
+import { NaticoClient, NaticoCommandHandler, NaticoClientOptions } from "https://deno.land/x/natico/mod.ts";
 class BotClient extends NaticoClient {
-  constructor() {
-    super({});
+  constructor(public options?: NaticoClientOptions) {
+    super(options);
   }
   commandHandler: NaticoCommandHandler = new NaticoCommandHandler(this, {
     directory: "./commands",
@@ -38,7 +38,7 @@ botClient.start(token);
   - Natico comes included with a listener(events) handler which makes it very easy to use events
 - And much more
 
-Natico is designed to be a very low level and extendable framework for
+Natico is designed to be a low level and extendable framework for
 [Discordeno](https://github.com/discordeno/discordeno)
 
 For more information/docs visit the
