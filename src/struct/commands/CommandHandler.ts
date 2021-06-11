@@ -37,24 +37,24 @@ export class NaticoCommandHandler extends NaticoHandler {
       guildonly = false,
       handleEdits = false,
     }: // handleSlashes = true,
-      {
-        directory?: string;
-        prefix?: prefixFn | string | string[];
-        IgnoreCD?: string[];
-        owners?: string[];
-        /**
-			 * cooldown in millieseconds
-			 */
-        cooldown?: number;
-        rateLimit?: number;
-        superusers?: string[];
-        /**
-			 * Commands will only work in guild channels with this on
-			 */
-        guildonly?: boolean;
-        handleEdits?: boolean;
-        // handleSlashes?: boolean;
-      },
+    {
+      directory?: string;
+      prefix?: prefixFn | string | string[];
+      IgnoreCD?: string[];
+      owners?: string[];
+      /**
+       * cooldown in millieseconds
+       */
+      cooldown?: number;
+      rateLimit?: number;
+      superusers?: string[];
+      /**
+       * Commands will only work in guild channels with this on
+       */
+      guildonly?: boolean;
+      handleEdits?: boolean;
+      // handleSlashes?: boolean;
+    }
   ) {
     super(client, {
       directory,
@@ -92,11 +92,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       return this.handleCommand(message as DiscordenoMessage);
     });
   }
-  async commandChecks(
-    command: NaticoCommand,
-    message: DiscordenoMessage,
-    args: string | undefined,
-  ) {
+  async commandChecks(command: NaticoCommand, message: DiscordenoMessage, args: string | undefined) {
     if (this.inhibitorHandler) {
       if (await this.inhibitorHandler.runChecks(message, command)) return true;
     }
@@ -131,13 +127,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
 
       if (command.permissions) {
-        if (
-          !hasGuildPermissions(
-            message!.guildId,
-            message.authorId,
-            command.permissions,
-          )
-        ) {
+        if (!hasGuildPermissions(message!.guildId, message.authorId, command.permissions)) {
           this.emit("userPermissions", message, command, args);
           return true;
         }
@@ -159,17 +149,13 @@ export class NaticoCommandHandler extends NaticoHandler {
     return false;
   }
   /**
-	 *
-	 * @param command - Command that gets executed
-	 * @param message - Message object to be passed through
-	 * @param args - arguments to be passed though
-	 * @returns - What the ran command returned
-	 */
-  public async runCommand(
-    command: NaticoCommand,
-    message: DiscordenoMessage,
-    args?: string,
-  ) {
+   *
+   * @param command - Command that gets executed
+   * @param message - Message object to be passed through
+   * @param args - arguments to be passed though
+   * @returns - What the ran command returned
+   */
+  public async runCommand(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
     if (await this.commandChecks(command, message, args)) return false;
 
     try {
@@ -178,13 +164,10 @@ export class NaticoCommandHandler extends NaticoHandler {
       await command.exec(message, data);
       this.emit("commandEnded", message, command, data);
       /**
-			 * Adding the user to a set and deleting them later!
-			 */
+       * Adding the user to a set and deleting them later!
+       */
       this.cooldowns.add(message.authorId.toString());
-      setTimeout(
-        () => this.cooldowns.delete(message.authorId.toString()),
-        this.cooldown,
-      );
+      setTimeout(() => this.cooldowns.delete(message.authorId.toString()), this.cooldown);
     } catch (e: unknown) {
       this.emit("commandError", message, command, e);
     }
@@ -207,23 +190,14 @@ export class NaticoCommandHandler extends NaticoHandler {
     if (message.isBot) return;
 
     /**
-		 * Allowing pings to be used as prefix!
-		 */
+     * Allowing pings to be used as prefix!
+     */
     if (message.content.startsWith(`<@!${this.client.id}>`)) {
-      console.log("Command found w mention");
-      const command = message.content
-        .toLowerCase()
-        .slice(`<@!${this.client.id}>`.length)
-        .trim()
-        .split(" ")[0];
+      const command = message.content.toLowerCase().slice(`<@!${this.client.id}>`.length).trim().split(" ")[0];
       const Command = this.findCommand(command);
 
       if (Command) {
-        const args = message.content
-          .slice(`<@!${this.client.id}>`.length)
-          .trim()
-          .slice(command.length)
-          .trim();
+        const args = message.content.slice(`<@!${this.client.id}>`.length).trim().slice(command.length).trim();
 
         return this.runCommand(Command, message, args);
       }
@@ -241,35 +215,27 @@ export class NaticoCommandHandler extends NaticoHandler {
   }
   async prefixCheck(prefix: string, message: DiscordenoMessage) {
     if (message.content.toLowerCase().startsWith(prefix)) {
-      const command = message.content
-        .toLowerCase()
-        .slice(prefix.length)
-        .trim()
-        .split(" ")[0];
+      const command = message.content.toLowerCase().slice(prefix.length).trim().split(" ")[0];
       const Command = this.findCommand(command);
       if (Command) {
-        const args = message.content
-          .slice(prefix.length)
-          .trim()
-          .slice(command.length)
-          .trim();
+        const args = message.content.slice(prefix.length).trim().slice(command.length).trim();
         await this.runCommand(Command, message, args);
         return true;
       }
     }
   }
   /**
-	 * Simple function to find a command could be useful outside of the handler
-	 * @param command - Command you want to search for
-	 * @returns Command object or undefined
-	 */
+   * Simple function to find a command could be useful outside of the handler
+   * @param command - Command you want to search for
+   * @returns Command object or undefined
+   */
   public findCommand(command: string | undefined): NaticoCommand | undefined {
     return this.modules.find((cmd) => {
       if (cmd.name == command) {
         return true;
       }
       if (cmd.aliases) {
-        if (cmd.aliases.includes(<string> command)) {
+        if (cmd.aliases.includes(<string>command)) {
           return true;
         }
       }
@@ -277,13 +243,13 @@ export class NaticoCommandHandler extends NaticoHandler {
     });
   }
   /**
-	 * Check if commands have slash data and if they do it will activete it
-	 * be carefull to no accidentally enable them globally,
-	 * first searches if the command is already enabled and if it changed since and edit it accordingly otherwise creates a command
-	 * also deletes unused slash commands
-	 * @param guildID - Specific guild to enable slash commands on
-	 * @returns - List of enabled commands
-	 */
+   * Check if commands have slash data and if they do it will activete it
+   * be carefull to no accidentally enable them globally,
+   * first searches if the command is already enabled and if it changed since and edit it accordingly otherwise creates a command
+   * also deletes unused slash commands
+   * @param guildID - Specific guild to enable slash commands on
+   * @returns - List of enabled commands
+   */
   async enableSlash(guildID?: bigint) {
     const slashed = this.slashed();
     await upsertSlashCommands(slashed, guildID);
@@ -291,9 +257,7 @@ export class NaticoCommandHandler extends NaticoHandler {
   }
   slashed() {
     const commands: EditGlobalApplicationCommand[] = [];
-    const data = this.modules.filter(
-      (command) => (command.enabled && command.slash) || false,
-    );
+    const data = this.modules.filter((command) => (command.enabled && command.slash) || false);
     data.forEach((command: NaticoCommand) => {
       const slashdata: EditGlobalApplicationCommand = {
         name: command.name || command.id,

@@ -12,17 +12,17 @@ export class NaticoClient extends EventEmitter {
     if (util) this.util = new ClientUtil(this);
   }
   /**
-	 *
-	 * @param event Add a event to be emitted
-	 */
+   *
+   * @param event Add a event to be emitted
+   */
   addEvent(event: string) {
     this.events[event] = (...args: any[]) => this.emit(event, ...args);
   }
   /**
-	 *
-	 * @param token The token used for logging in
-	 * @returns
-	 */
+   *
+   * @param token The token used for logging in
+   * @returns
+   */
   login(token: string) {
     return startBot({
       token,

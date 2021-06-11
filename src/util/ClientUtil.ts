@@ -7,8 +7,8 @@ export class ClientUtil {
     this.client = client;
   }
   /**
-	 * @returns a sneaky embed
-	 */
+   * @returns a sneaky embed
+   */
   embed() {
     return new NaticoEmbed();
   }

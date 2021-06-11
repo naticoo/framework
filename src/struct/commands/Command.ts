@@ -47,7 +47,7 @@ export class NaticoCommand extends NaticoModule {
       ownerOnly?: boolean;
       superUserOnly?: boolean;
       permissions?: PermissionStrings[];
-    },
+    }
   ) {
     super(id);
     this.options = options;
@@ -64,11 +64,7 @@ export class NaticoCommand extends NaticoModule {
     this.id = id;
 
     this.aliases = Array.from(
-      new Set([
-        ...aliases!.map((name: string) => name.toLowerCase()),
-        id.toLowerCase(),
-        name!.toLowerCase(),
-      ]),
+      new Set([...aliases!.map((name: string) => name.toLowerCase()), id.toLowerCase(), name!.toLowerCase()])
     );
 
     this.category = category || "general";

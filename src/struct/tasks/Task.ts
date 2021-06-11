@@ -4,10 +4,7 @@ export class NaticoTask extends NaticoModule {
   declare handler: NaticoTaskHandler;
   delay?: number;
   runOnStart?: boolean;
-  constructor(
-    id: string,
-    { delay, runOnStart = false }: { delay?: number; runOnStart?: boolean },
-  ) {
+  constructor(id: string, { delay, runOnStart = false }: { delay?: number; runOnStart?: boolean }) {
     super(id);
     this.delay = delay;
     this.runOnStart = runOnStart;
