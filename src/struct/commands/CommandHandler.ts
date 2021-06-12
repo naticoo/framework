@@ -13,7 +13,7 @@ import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
 import { NaticoCommand } from "./Command.ts";
 import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
-import { ConvertedOptions, prefixFn } from "../../util/Interfaces.ts";
+import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 export class NaticoCommandHandler extends NaticoHandler {
   modules: Collection<string, NaticoCommand | NaticoSubCommand>;
   cooldowns: Set<string>;
@@ -63,7 +63,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       /**
        * Single means all subcommands in the same file; multiple means in every file
        */
-      subType: "single" | "multiple";
+      subType?: "single" | "multiple";
       // handleSlashes?: boolean;
     }
   ) {
@@ -168,16 +168,11 @@ export class NaticoCommandHandler extends NaticoHandler {
    * @returns - What the ran command returned
    */
   public async runCommand(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
-    console.log(args);
-    console.log(args);
-    console.log(args);
-    console.log(args);
-    console.log(args);
     if (await this.commandChecks(command, message, args)) return false;
 
     try {
       let sub: string | null = null;
-
+      let savedOptions: ArgOptions[] | undefined = undefined;
       if (command?.options && args) {
         if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
           //Thing needs to be defined to not cause mutation
@@ -187,6 +182,7 @@ export class NaticoCommandHandler extends NaticoHandler {
               if (this.subType == "multiple") {
                 args = args.split(" ").slice(1).join(" ");
                 sub = option.name;
+                savedOptions = command.options as ArgOptions[];
                 command.options = option.options;
               } else {
                 const mod = this.modules.find((mod) => {
@@ -196,7 +192,8 @@ export class NaticoCommandHandler extends NaticoHandler {
                   return false;
                 });
                 if (mod) {
-                  this.runCommand(mod, message, args.split(" ").slice(1).join(" "));
+                  console.log(mod);
+                  return this.runCommand(mod, message, args.split(" ").slice(1).join(" "));
                 }
               }
             }
@@ -204,6 +201,9 @@ export class NaticoCommandHandler extends NaticoHandler {
         }
       }
       const data = await this.generator.handleArgs(command, message, args);
+
+      if (savedOptions) command.options = savedOptions;
+
       this.emit("commandStarted", message, command, data);
       //@ts-ignore -
       sub
