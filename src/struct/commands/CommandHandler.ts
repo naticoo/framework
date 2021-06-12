@@ -1,6 +1,7 @@
 import {
   ApplicationCommandOption,
   Collection,
+  DiscordApplicationCommandOptionTypes,
   DiscordenoMessage,
   EditGlobalApplicationCommand,
   hasGuildPermissions,
@@ -159,9 +160,23 @@ export class NaticoCommandHandler extends NaticoHandler {
     if (await this.commandChecks(command, message, args)) return false;
 
     try {
-      const data = await this.generator.generateArgs(command, message, args);
+      let sub: string | null = null;
+
+      if (command?.options && args) {
+        if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
+          for (const option of command.options) {
+            if (option.name == args.split(" ")[0].toLowerCase()) {
+              args = args.split(" ").slice(1).join(" ");
+              sub = option.name;
+              command.options = option.options;
+            }
+          }
+        }
+      }
+      const data = await this.generator.handleArgs(command, message, args);
       this.emit("commandStarted", message, command, data);
-      await command.exec(message, data);
+      //@ts-ignore -
+      sub ? await command[sub](message, data) : await command.exec(message, data);
       this.emit("commandEnded", message, command, data);
       /**
        * Adding the user to a set and deleting them later!

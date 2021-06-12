@@ -12,7 +12,10 @@ export interface ArgOptions extends ApplicationCommandOption {
   match?: matches;
   customType?: customType;
 }
-export type customType = (message: DiscordenoMessage, content: string) => any | Promise<any>;
+export type customType = (
+  message: DiscordenoMessage,
+  content: string,
+) => any | Promise<any>;
 
 export enum Matches {
   rest,

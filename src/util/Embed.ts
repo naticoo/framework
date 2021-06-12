@@ -2,7 +2,12 @@
  * Code taken from https://github.com/discordeno/template/blob/main/src/utils/Embed.ts not modified
  */
 
-import { EmbedAuthor, EmbedField, EmbedFooter, EmbedImage } from "../../deps.ts";
+import {
+  EmbedAuthor,
+  EmbedField,
+  EmbedFooter,
+  EmbedImage,
+} from "../../deps.ts";
 const embedLimits = {
   title: 256,
   description: 2048,
@@ -56,19 +61,20 @@ export class NaticoEmbed {
   }
 
   setAuthor(name: string, icon?: string, url?: string) {
-    const finalName = this.enforceLimits ? this.fitData(name, embedLimits.authorName) : name;
+    const finalName = this.enforceLimits
+      ? this.fitData(name, embedLimits.authorName)
+      : name;
     this.author = { name: finalName, iconUrl: icon, url };
 
     return this;
   }
 
   setColor(color: string) {
-    this.color =
-      color.toLowerCase() === `random`
-        ? // Random color
-          Math.floor(Math.random() * (0xffffff + 1))
-        : // Convert the hex to a acceptable color for discord
-          parseInt(color.replace("#", ""), 16);
+    this.color = color.toLowerCase() === `random`
+      ? // Random color
+        Math.floor(Math.random() * (0xffffff + 1))
+      : // Convert the hex to a acceptable color for discord
+        parseInt(color.replace("#", ""), 16);
 
     return this;
   }

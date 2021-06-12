@@ -9,7 +9,10 @@ export class NaticoInhibitor extends NaticoModule {
     super(id);
     this.priority = priority;
   }
-  exec(_message: DiscordenoMessage, _command: NaticoCommand): Promise<boolean> | boolean {
+  exec(
+    _message: DiscordenoMessage,
+    _command: NaticoCommand,
+  ): Promise<boolean> | boolean {
     throw new Error(`${this.id} no implementated`);
   }
 }

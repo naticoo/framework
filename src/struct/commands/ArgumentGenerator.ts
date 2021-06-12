@@ -3,23 +3,13 @@ import { NaticoCommand } from "./Command.ts";
 
 import { Matches } from "../../util/Interfaces.ts";
 import {
+  DiscordApplicationCommandOptionTypes,
   DiscordenoMessage,
+  fetchMembers,
   Lexer,
   longShortStrategy,
   Parser,
-  DiscordApplicationCommandOptionTypes,
-  fetchMembers,
-  cache,
-  ChannelTypes,
-  snowflakeToBigint,
 } from "../../../deps.ts";
-const textChannelTypes = [
-  ChannelTypes.GuildText,
-  ChannelTypes.GuildNews,
-  ChannelTypes.GuildNewsThread,
-  ChannelTypes.GuildPivateThread,
-  ChannelTypes.GuildPublicThread,
-];
 export class ArgumentGenerator {
   client: NaticoClient;
   constructor(client: NaticoClient) {
@@ -32,7 +22,7 @@ export class ArgumentGenerator {
    * @param args
    * @returns
    */
-  async generateArgs(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
+  async handleArgs(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
     if (!args) return {};
     const lout = new Lexer(args)
       .setQuotes([
@@ -67,6 +57,17 @@ export class ArgumentGenerator {
         rest.push(items[item].value);
       }
     }
+    // if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
+    //   let restContent = rest.slice(1).join(" ");
+
+    //   for (const option of command.options) {
+    //     if (option.name == rest[0]) {
+    //       for (const option of command.options) {
+    //         [data, args, restContent] = await this.generateArgs(message, args, restContent, option, data);
+    //       }
+    //     }
+    //   }
+    // }
     if (command?.options) {
       let restContent = rest.join(" ");
 
@@ -77,7 +78,6 @@ export class ArgumentGenerator {
             data[name] = restContent;
           }
           if (option.type === DiscordApplicationCommandOptionTypes.Integer) {
-            console.log(parseInt(restContent));
             data[name] = parseInt(restContent);
           }
           if (option.type === DiscordApplicationCommandOptionTypes.Boolean) {
@@ -146,7 +146,9 @@ export class ArgumentGenerator {
     let user = message.guild!.members.find((member) => {
       if (id && member.id == BigInt(id[1])) return true;
       if (!item.length) return false;
-      if (member.name(message.guildId).toLowerCase().includes(item)) return true;
+      if (member.name(message.guildId).toLowerCase().includes(item)) {
+        return true;
+      }
       if (member.tag.toLowerCase().includes(item)) true;
       return false;
     });
