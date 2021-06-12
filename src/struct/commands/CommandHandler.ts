@@ -11,10 +11,11 @@ import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator } from "./ArgumentGenerator.ts";
 import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
 import { NaticoCommand } from "./Command.ts";
+import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn } from "../../util/Interfaces.ts";
 export class NaticoCommandHandler extends NaticoHandler {
-  modules: Collection<string, NaticoCommand>;
+  modules: Collection<string, NaticoCommand | NaticoSubCommand>;
   cooldowns: Set<string>;
   IgnoreCD: string[];
   owners: string[];
@@ -25,6 +26,10 @@ export class NaticoCommandHandler extends NaticoHandler {
   handleEdits: boolean;
   inhibitorHandler!: NaticoInhibitorHandler;
   generator: ArgumentGenerator;
+  /**
+   * Single means all subcommands in the same file; multiple means in every file
+   */
+  subType: "single" | "multiple";
   // handleSlashes: boolean;
   constructor(
     client: NaticoClient,
@@ -37,6 +42,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       superusers = [],
       guildonly = false,
       handleEdits = false,
+      subType = "single",
     }: // handleSlashes = true,
     {
       directory?: string;
@@ -54,6 +60,10 @@ export class NaticoCommandHandler extends NaticoHandler {
        */
       guildonly?: boolean;
       handleEdits?: boolean;
+      /**
+       * Single means all subcommands in the same file; multiple means in every file
+       */
+      subType: "single" | "multiple";
       // handleSlashes?: boolean;
     }
   ) {
@@ -72,6 +82,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.guildonly = guildonly;
     this.modules = new Collection();
     this.generator = new ArgumentGenerator(this.client);
+    this.subType = subType;
     this.start();
   }
   start() {
@@ -157,6 +168,11 @@ export class NaticoCommandHandler extends NaticoHandler {
    * @returns - What the ran command returned
    */
   public async runCommand(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
+    console.log(args);
+    console.log(args);
+    console.log(args);
+    console.log(args);
+    console.log(args);
     if (await this.commandChecks(command, message, args)) return false;
 
     try {
@@ -164,11 +180,25 @@ export class NaticoCommandHandler extends NaticoHandler {
 
       if (command?.options && args) {
         if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
+          //Thing needs to be defined to not cause mutation
+          const thing = args.split(" ")[0].toLowerCase();
           for (const option of command.options) {
-            if (option.name == args.split(" ")[0].toLowerCase()) {
-              args = args.split(" ").slice(1).join(" ");
-              sub = option.name;
-              command.options = option.options;
+            if (option.name === thing) {
+              if (this.subType == "multiple") {
+                args = args.split(" ").slice(1).join(" ");
+                sub = option.name;
+                command.options = option.options;
+              } else {
+                const mod = this.modules.find((mod) => {
+                  if (mod instanceof NaticoSubCommand && mod.subOf == command.name && mod.name == option.name) {
+                    return true;
+                  }
+                  return false;
+                });
+                if (mod) {
+                  this.runCommand(mod, message, args.split(" ").slice(1).join(" "));
+                }
+              }
             }
           }
         }
@@ -176,7 +206,10 @@ export class NaticoCommandHandler extends NaticoHandler {
       const data = await this.generator.handleArgs(command, message, args);
       this.emit("commandStarted", message, command, data);
       //@ts-ignore -
-      sub ? await command[sub](message, data) : await command.exec(message, data);
+      sub
+        ? //@ts-ignore -
+          await command[sub](message, data)
+        : await command.exec(message, data);
       this.emit("commandEnded", message, command, data);
       /**
        * Adding the user to a set and deleting them later!
@@ -246,6 +279,7 @@ export class NaticoCommandHandler extends NaticoHandler {
    */
   public findCommand(command: string | undefined): NaticoCommand | undefined {
     return this.modules.find((cmd) => {
+      if (cmd instanceof NaticoSubCommand) return false;
       if (cmd.name == command) {
         return true;
       }

@@ -47,7 +47,7 @@ export class NaticoCommand extends NaticoModule {
       ownerOnly?: boolean;
       superUserOnly?: boolean;
       permissions?: PermissionStrings[];
-    },
+    }
   ) {
     super(id);
     this.options = options;
@@ -63,20 +63,11 @@ export class NaticoCommand extends NaticoModule {
 
     this.id = id;
 
-    this.aliases = Array.from(
-      new Set([
-        ...aliases!.map((name: string) => name.toLowerCase()),
-        id.toLowerCase(),
-        name!.toLowerCase(),
-      ]),
-    );
+    this.aliases = aliases || [this.id];
 
     this.category = category || "general";
   }
-  exec(
-    _message: DiscordenoMessage,
-    _options: ConvertedOptions | undefined | null,
-  ): Promise<any> | any {
+  exec(_message: DiscordenoMessage, _options: ConvertedOptions | undefined | null): Promise<any> | any {
     throw new Error(`NOT_CREATED ${this.id}`);
   }
 }
