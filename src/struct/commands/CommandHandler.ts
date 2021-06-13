@@ -192,7 +192,6 @@ export class NaticoCommandHandler extends NaticoHandler {
                   return false;
                 });
                 if (mod) {
-                  console.log(mod);
                   return this.runCommand(mod, message, args.split(" ").slice(1).join(" "));
                 }
               }
@@ -205,7 +204,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       if (savedOptions) command.options = savedOptions;
 
       this.emit("commandStarted", message, command, data);
-      //@ts-ignore -
+
       sub
         ? //@ts-ignore -
           await command[sub](message, data)
