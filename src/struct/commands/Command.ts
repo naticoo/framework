@@ -17,7 +17,7 @@ export class NaticoCommand extends NaticoModule {
   superUserOnly: boolean | undefined;
   options?: ArgOptions[];
   clientPermissions: PermissionStrings[] | undefined;
-  UserPermissions: PermissionStrings[] | undefined;
+  userPermissions: PermissionStrings[] | undefined;
 
   constructor(
     id: string,
@@ -32,7 +32,7 @@ export class NaticoCommand extends NaticoModule {
       superUserOnly,
       options,
       clientPermissions,
-      UserPermissions,
+      userPermissions,
     }: {
       options?: ArgOptions[];
 
@@ -45,7 +45,7 @@ export class NaticoCommand extends NaticoModule {
       ownerOnly?: boolean;
       superUserOnly?: boolean;
       clientPermissions?: PermissionStrings[];
-      UserPermissions?: PermissionStrings[];
+      userPermissions?: PermissionStrings[];
     }
   ) {
     super(id);
@@ -57,7 +57,7 @@ export class NaticoCommand extends NaticoModule {
     this.name = name?.toLowerCase() || id.toLowerCase();
     this.examples = examples || [`${name}`];
     this.clientPermissions = clientPermissions;
-    this.UserPermissions = UserPermissions;
+    this.userPermissions = UserPermissions;
     this.id = id;
 
     this.aliases = aliases || [this.id];
