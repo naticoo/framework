@@ -10,11 +10,7 @@ This is a framework for [Discordeno](https://github.com/discordeno/discordeno)
 ## Simple setup
 
 ```ts
-import {
-  NaticoClient,
-  NaticoClientOptions,
-  NaticoCommandHandler,
-} from "https://deno.land/x/natico/mod.ts";
+import { NaticoClient, NaticoClientOptions, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
 class BotClient extends NaticoClient {
   constructor(public options?: NaticoClientOptions) {
     super(options);
@@ -23,15 +19,16 @@ class BotClient extends NaticoClient {
     directory: "./commands",
     prefix: "!",
   });
-  async start(token: string) {
+  async start() {
     await this.commandHandler.loadALL();
-    return this.login(token);
+    return this.login();
   }
 }
 const botClient = new BotClient({
   intents: ["Guilds", "GuildMessages", "GuildVoiceStates"],
+  token: "your token",
 });
-botClient.start(token);
+botClient.start();
 ```
 
 ### Features
