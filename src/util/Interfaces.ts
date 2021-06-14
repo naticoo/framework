@@ -9,13 +9,10 @@ export interface prefixFn {
   (message: DiscordenoMessage): string | string[] | Promise<string | string[]>;
 }
 export interface ArgOptions extends ApplicationCommandOption {
-  match?: matches;
+  match?: Matches;
   customType?: customType;
 }
-export type customType = (
-  message: DiscordenoMessage,
-  content: string,
-) => any | Promise<any>;
+export type customType = (message: DiscordenoMessage, content: string) => any | Promise<any>;
 
 export enum Matches {
   rest,

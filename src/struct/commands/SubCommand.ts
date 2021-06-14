@@ -22,7 +22,8 @@ export class NaticoSubCommand extends NaticoCommand {
        * The main command
        */
       subOf,
-      permissions,
+      clientPermissions,
+      UserPermissions,
     }: {
       options?: ArgOptions[];
       subOf: string;
@@ -36,7 +37,8 @@ export class NaticoSubCommand extends NaticoCommand {
       category?: string;
       ownerOnly?: boolean;
       superUserOnly?: boolean;
-      permissions?: PermissionStrings[];
+      clientPermissions?: PermissionStrings[];
+      UserPermissions?: PermissionStrings[];
     }
   ) {
     super(id, {
@@ -51,7 +53,8 @@ export class NaticoSubCommand extends NaticoCommand {
       ownerOnly,
       superUserOnly,
       options,
-      permissions,
+      clientPermissions,
+      UserPermissions,
     });
     this.subOf = subOf;
   }

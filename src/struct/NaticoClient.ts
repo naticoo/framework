@@ -1,14 +1,14 @@
 import { BotConfig, botId, EventEmitter, startBot } from "../../deps.ts";
 import { Events } from "../util/Interfaces.ts";
-import { ClientUtil } from "../util/ClientUtil.ts";
+import { NaticoClientUtil } from "../util/ClientUtil.ts";
 export class NaticoClient extends EventEmitter {
   events: Events = {};
-  util!: ClientUtil;
+  util!: NaticoClientUtil;
   id = botId;
   constructor(public config?: NaticoClientOptions) {
     super();
     this.events = {};
-    if (this.config?.util) this.util = new ClientUtil(this);
+    if (this.config?.util) this.util = new NaticoClientUtil(this);
   }
   /**
    *

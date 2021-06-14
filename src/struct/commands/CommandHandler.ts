@@ -6,6 +6,7 @@ import {
   EditGlobalApplicationCommand,
   hasGuildPermissions,
   upsertSlashCommands,
+  botId,
 } from "../../../deps.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator } from "./ArgumentGenerator.ts";
@@ -14,6 +15,7 @@ import { NaticoCommand } from "./Command.ts";
 import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
+import { CommandHandlerEvents } from "../../util/Constants.ts";
 export class NaticoCommandHandler extends NaticoHandler {
   modules: Collection<string, NaticoCommand | NaticoSubCommand>;
   cooldowns: Set<string>;
@@ -110,51 +112,43 @@ export class NaticoCommandHandler extends NaticoHandler {
     }
     const authorId = message.authorId.toString();
     if (!this.superusers.includes(authorId)) {
-      if (!command.enabled) {
-        if (!this.superusers.includes(authorId)) {
-          this.emit("disabled", message, command, args);
-          return true;
-        }
-      }
-
       if (this.cooldowns.has(authorId)) {
         if (!this.IgnoreCD.includes(authorId)) {
-          this.emit("cooldownBlocked", message, command, args);
+          this.emit(CommandHandlerEvents.COOLDOWN, message, command, args);
           return true;
         }
       }
 
       if (this.guildonly) {
         if (!message.guildId) {
-          this.emit("guildOnly", message, command, args);
+          this.emit(CommandHandlerEvents.GUILDONLY, message, command, args);
           return true;
         }
       }
 
-      if (command.required) {
-        if (!args) {
-          this.emit("required", message, command);
+      if (command.UserPermissions) {
+        if (!hasGuildPermissions(message!.guildId, message.authorId, command.UserPermissions)) {
+          this.emit(CommandHandlerEvents.USERPERMISSIONS, message, command, args);
           return true;
         }
       }
-
-      if (command.permissions) {
-        if (!hasGuildPermissions(message!.guildId, message.authorId, command.permissions)) {
-          this.emit("userPermissions", message, command, args);
+      if (command.clientPermissions) {
+        if (!hasGuildPermissions(message!.guildId, botId, command.clientPermissions)) {
+          this.emit(CommandHandlerEvents.CLIENTPERMISSIONS, message, command, args);
           return true;
         }
       }
     }
     if (command.ownerOnly) {
       if (!this.owners.includes(authorId)) {
-        this.emit("ownerOnly", message, command, args);
+        this.emit(CommandHandlerEvents.OWNERONLY, message, command, args);
         return true;
       }
     }
 
     if (command.superUserOnly) {
       if (!this.superusers.includes(authorId)) {
-        this.emit("superUserOnly", message, command, args);
+        this.emit(CommandHandlerEvents.SUPERUSERRONLY, message, command, args);
         return true;
       }
     }
@@ -192,7 +186,8 @@ export class NaticoCommandHandler extends NaticoHandler {
                   return false;
                 });
                 if (mod) {
-                  return this.runCommand(mod, message, args.split(" ").slice(1).join(" "));
+                  this.runCommand(mod, message, args.split(" ").slice(1).join(" "));
+                  return;
                 }
               }
             }
@@ -205,11 +200,11 @@ export class NaticoCommandHandler extends NaticoHandler {
 
       this.emit("commandStarted", message, command, data);
 
-      sub
+      const res = sub
         ? //@ts-ignore -
           await command[sub](message, data)
         : await command.exec(message, data);
-      this.emit("commandEnded", message, command, data);
+      this.emit("commandEnded", message, command, data, res);
       /**
        * Adding the user to a set and deleting them later!
        */

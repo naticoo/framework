@@ -1,7 +1,7 @@
 import { NaticoEmbed } from "./Embed.ts";
 import { NaticoClient } from "../struct/NaticoClient.ts";
 
-export class ClientUtil {
+export class NaticoClientUtil {
   client: NaticoClient;
   constructor(client: NaticoClient) {
     this.client = client;
