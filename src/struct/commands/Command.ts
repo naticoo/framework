@@ -57,7 +57,7 @@ export class NaticoCommand extends NaticoModule {
     this.name = name?.toLowerCase() || id.toLowerCase();
     this.examples = examples || [`${name}`];
     this.clientPermissions = clientPermissions;
-    this.userPermissions = UserPermissions;
+    this.userPermissions = userPermissions;
     this.id = id;
 
     this.aliases = aliases || [this.id];
