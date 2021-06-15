@@ -1,4 +1,7 @@
-import { ApplicationCommandOption, DiscordenoMessage } from "../../deps.ts";
+import { ApplicationCommandOption, DiscordenoMessage } from "../../discordeno_deps.ts";
+export interface NaticoMessage extends DiscordenoMessage {
+  util?: any;
+}
 export interface Events {
   [name: string]: (...args: any[]) => Promise<any> | any;
 }
@@ -6,13 +9,13 @@ export interface ConvertedOptions {
   [name: string]: string;
 }
 export interface prefixFn {
-  (message: DiscordenoMessage): string | string[] | Promise<string | string[]>;
+  (message: NaticoMessage): string | string[] | Promise<string | string[]>;
 }
 export interface ArgOptions extends ApplicationCommandOption {
   match?: Matches;
   customType?: customType;
 }
-export type customType = (message: DiscordenoMessage, content: string) => any | Promise<any>;
+export type customType = (message: NaticoMessage, content: string) => any | Promise<any>;
 
 export enum Matches {
   rest,
