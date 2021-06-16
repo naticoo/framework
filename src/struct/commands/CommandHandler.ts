@@ -126,7 +126,7 @@ export class NaticoCommandHandler extends NaticoHandler {
         }
       }
 
-      if (command.UserPermissions) {
+      if (command.userPermissions) {
         if (!hasGuildPermissions(message!.guildId, message.authorId, command.UserPermissions)) {
           this.emit(CommandHandlerEvents.USERPERMISSIONS, message, command, args);
           return true;
@@ -171,6 +171,7 @@ export class NaticoCommandHandler extends NaticoHandler {
         if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
           //Thing needs to be defined to not cause mutation
           const thing = args.split(" ")[0].toLowerCase();
+
           for (const option of command.options) {
             if (option.name === thing) {
               if (this.subType == "multiple") {

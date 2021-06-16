@@ -26,24 +26,24 @@ export abstract class NaticoHandler extends EventEmitter {
     this.deregister(mod);
     return mod;
   }
-  reload(id: string) {
-    const mod = this.modules.get(id.toString());
+  async reload(id: string) {
+    const mod = this.modules.get(id);
     if (!mod) return;
     this.deregister(mod);
 
     const filepath = mod.filepath;
-    const newMod = this.load(filepath);
+    const newMod = await this.load(filepath);
     return newMod;
   }
   deregister(mod: NaticoModule) {
     this.modules.delete(mod.id);
   }
-  reloadAll() {
+  async reloadAll() {
     for (const m of Array.from(this.modules.values())) {
-      if (m.filepath) this.reload(m.id);
+      if (m.filepath) await this.reload(m.id);
     }
 
-    return this;
+    return this.modules;
   }
   async loadALL(dirPath?: string) {
     dirPath = await Deno.realPath(dirPath || this.directory);

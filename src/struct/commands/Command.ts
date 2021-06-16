@@ -5,7 +5,7 @@ import { ArgOptions, ConvertedOptions } from "../../util/Interfaces.ts";
 export class NaticoCommand extends NaticoModule {
   declare handler: NaticoCommandHandler;
   id: string;
-  category: string | undefined;
+  category: string;
   aliases: string[] | undefined;
   name: string;
   examples: string[] | undefined;
