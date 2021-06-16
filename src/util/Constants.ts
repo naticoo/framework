@@ -9,3 +9,6 @@ export enum CommandHandlerEvents {
   COMMANDENDED = "commandEnded",
   COMMANDERROR = "commandError",
 }
+export enum TaskHandlerEvents {
+  TASKERROR = "taskError",
+}
