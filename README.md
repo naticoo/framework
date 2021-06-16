@@ -43,8 +43,8 @@ botClient.start();
     easy to use events
 - And much more
 
-Natico is designed to be a low level and extendable framework for
-[Discordeno](https://github.com/discordeno/discordeno)
+Natico is designed to be a low level and extendable framework for [Discordeno](https://github.com/discordeno/discordeno)
 
-For more information/docs visit the
-[examples](https://github.com/naticoo/examplebot) page
+This project is inspireed by [discord-akairo](https://github.com/discord-akairo/discord-akairo)
+
+For more information/docs visit the [examples](https://github.com/naticoo/examplebot) page
