@@ -112,12 +112,14 @@ export class NaticoCommandHandler extends NaticoHandler {
     }
     const authorId = message.authorId.toString();
     if (!this.superusers.includes(authorId)) {
-      if (this.cooldowns.has(authorId)) {
-        if (!this.IgnoreCD.includes(authorId)) {
-          this.emit(CommandHandlerEvents.COOLDOWN, message, command, args);
-          return true;
+      //Otherwise you would get on cooldown
+      if (command instanceof NaticoSubCommand == false)
+        if (this.cooldowns.has(authorId)) {
+          if (!this.IgnoreCD.includes(authorId)) {
+            this.emit(CommandHandlerEvents.COOLDOWN, message, command, args);
+            return true;
+          }
         }
-      }
 
       if (this.guildonly) {
         if (!message.guildId) {
