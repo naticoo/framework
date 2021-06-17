@@ -6,7 +6,7 @@ export interface Events {
   [name: string]: (...args: any[]) => Promise<any> | any;
 }
 export interface ConvertedOptions {
-  [name: string]: string;
+  [name: string]: any;
 }
 export interface prefixFn {
   (message: NaticoMessage): string | string[] | Promise<string | string[]>;
