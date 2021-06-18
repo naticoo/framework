@@ -7,6 +7,7 @@ import {
   hasGuildPermissions,
   upsertSlashCommands,
   botId,
+  getMissingGuildPermissions,
 } from "../../../deps.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator } from "./ArgumentGenerator.ts";
@@ -110,6 +111,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     if (this.inhibitorHandler) {
       if (await this.inhibitorHandler.runChecks(message, command)) return true;
     }
+
     const authorId = message.authorId.toString();
     if (!this.superusers.includes(authorId)) {
       //Otherwise you would get on cooldown
@@ -129,14 +131,20 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
 
       if (command.userPermissions) {
-        if (!hasGuildPermissions(message!.guildId, message.authorId, command.userPermissions)) {
-          this.emit(CommandHandlerEvents.USERPERMISSIONS, message, command, args);
+        const missingPermissions = await getMissingGuildPermissions(
+          message!.guildId,
+          message.authorId,
+          command.userPermissions
+        );
+        if (missingPermissions[0]) {
+          this.emit(CommandHandlerEvents.USERPERMISSIONS, message, command, args, missingPermissions);
           return true;
         }
       }
       if (command.clientPermissions) {
-        if (!hasGuildPermissions(message!.guildId, botId, command.clientPermissions)) {
-          this.emit(CommandHandlerEvents.CLIENTPERMISSIONS, message, command, args);
+        const missingPermissions = await getMissingGuildPermissions(message!.guildId, botId, command.clientPermissions);
+        if (missingPermissions[0]) {
+          this.emit(CommandHandlerEvents.CLIENTPERMISSIONS, message, command, args, missingPermissions);
           return true;
         }
       }
