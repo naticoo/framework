@@ -129,7 +129,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
 
       if (command.userPermissions) {
-        if (!hasGuildPermissions(message!.guildId, message.authorId, command.UserPermissions)) {
+        if (!hasGuildPermissions(message!.guildId, message.authorId, command.userPermissions)) {
           this.emit(CommandHandlerEvents.USERPERMISSIONS, message, command, args);
           return true;
         }
