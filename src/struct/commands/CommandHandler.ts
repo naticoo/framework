@@ -246,8 +246,10 @@ export class NaticoCommandHandler extends NaticoHandler {
     if (message.isBot) return;
 
     const prefixes = typeof this.prefix == "function" ? await this.prefix(message) : this.prefix;
+    const parsedPrefixes = [];
 
-    const parsedPrefixes = [...prefixes];
+    if (Array.isArray(prefixes)) parsedPrefixes.push(...prefixes);
+    else parsedPrefixes.push(prefixes);
     if (this.mentionPrefix) parsedPrefixes.push(`<@!${botId}>`, `<@${botId}>`);
 
     for (const prefix of parsedPrefixes) {
@@ -255,6 +257,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     }
   }
   async prefixCheck(prefix: string, message: DiscordenoMessage) {
+    console.log(prefix);
     if (message.content.toLowerCase().startsWith(prefix)) {
       const commandName = message.content.toLowerCase().slice(prefix.length).trim().split(" ")[0];
       const command = this.findCommand(commandName);
