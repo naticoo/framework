@@ -1,9 +1,9 @@
 import { EventEmitter } from "../../deps.ts";
 
 export class NaticoHandler extends EventEmitter {
-  client
-  directory
-  modules
+  client;
+  directory;
+  modules;
   constructor(client, { directory }) {
     super();
     this.client = client;
