@@ -1,5 +1,5 @@
 import { DiscordenoMessage, PermissionStrings } from "../../../deps.ts";
-import { NaticoModule } from "../NaticoModule.ts";
+import { NaticoModule } from "../NaticoModule.js";
 import { NaticoCommandHandler } from "./CommandHandler.ts";
 import { ArgOptions, ConvertedOptions } from "../../util/Interfaces.ts";
 export class NaticoCommand extends NaticoModule {

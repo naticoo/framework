@@ -104,13 +104,15 @@ export class CommandUtil {
    * @param {string | APIMessage | MessageOptions} options - Options to use.
    * @returns {Promise<Message|Message[]>}
    */
-  async send(content: string | CreateMessage, mentionUser?: boolean) {
+  async send(content: string | CreateMessage) {
     if (this.shouldEdit) {
+      if (typeof content !== "string" && !content.embeds) content.embeds = [];
+      if (typeof content !== "string" && !content.content) content.content = "";
+
       return this.lastResponse.edit(content);
     }
-    console.log(content);
     const sent = await this.message.channel!.send(content);
-    const lastSent = this.setLastResponse(sent);
+    const lastSent = this.setLastResponse(sent as DiscordenoMessage);
     this.setEditable(!lastSent.attachments.length);
     return sent;
   }
@@ -122,7 +124,7 @@ export class CommandUtil {
    */
   async sendNew(content: string | CreateMessage) {
     const sent = await this.message.channel!.send(content);
-    const lastSent = this.setLastResponse(sent);
+    const lastSent = this.setLastResponse(sent as DiscordenoMessage);
     this.setEditable(!lastSent.attachments.length);
     return sent;
   }
@@ -132,7 +134,7 @@ export class CommandUtil {
    * @param {string|ReplyMessageOptions|MessageAdditions} options - Options to use.
    * @returns {Promise<Message|Message[]>}
    */
-  reply(options: string | CreateMessage, mentionUser?: boolean) {
+  reply(options: string | CreateMessage) {
     let newOptions: any = {};
     if (typeof options == "string") {
       newOptions.content = options;
@@ -145,7 +147,7 @@ export class CommandUtil {
         messageId: this.message.id,
       };
     }
-    return this.send(newOptions, mentionUser);
+    return this.send(newOptions);
   }
 
   /**
@@ -153,8 +155,8 @@ export class CommandUtil {
    * @param {string | MessageEditOptions | APIMessage} options - Options to use.
    * @returns {Promise<Message>}
    */
-  edit(content: string | CreateMessage, mentionUser?: boolean) {
-    return this.lastResponse.edit(options);
+  edit(content: string | CreateMessage) {
+    return this.lastResponse.edit(content);
   }
 }
 

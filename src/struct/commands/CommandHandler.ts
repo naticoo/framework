@@ -15,7 +15,7 @@ import { ArgumentGenerator } from "./ArgumentGenerator.ts";
 import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
 import { NaticoCommand } from "./Command.ts";
 import { NaticoSubCommand } from "./SubCommand.ts";
-import { NaticoHandler } from "../NaticoHandler.ts";
+import { NaticoHandler } from "../NaticoHandler.js";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
 export interface NaticoCommandHandlerOptions {
@@ -103,8 +103,8 @@ export class NaticoCommandHandler extends NaticoHandler {
   start() {
     if (this.handleEdits) {
       this.client.addEvent("messageUpdate");
-      this.client.on("messageUpdate", (message) => {
-        return this.handleCommand(message as DiscordenoMessage);
+      this.client.on("messageUpdate", (message: DiscordenoMessage) => {
+        return this.handleCommand(message);
       });
     }
     // if (this.handleSlashes) {
@@ -115,8 +115,8 @@ export class NaticoCommandHandler extends NaticoHandler {
     // 	});
     // }
     this.client.addEvent("messageCreate");
-    this.client.on("messageCreate", (message) => {
-      return this.handleCommand(message as DiscordenoMessage);
+    this.client.on("messageCreate", (message: DiscordenoMessage) => {
+      return this.handleCommand(message);
     });
   }
   async commandChecks(command: NaticoCommand, message: DiscordenoMessage, args: string | undefined) {

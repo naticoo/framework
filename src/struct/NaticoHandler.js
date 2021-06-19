@@ -1,17 +1,16 @@
-import { Collection, EventEmitter } from "../../deps.ts";
-import { NaticoClient, NaticoModule } from "../mod.ts";
+import { EventEmitter } from "../../deps.ts";
 
-export abstract class NaticoHandler extends EventEmitter {
-  client: NaticoClient;
-  directory: string;
-  abstract modules: Collection<string, NaticoModule> = new Collection();
-  constructor(client: NaticoClient, { directory }: { directory: string }) {
+export class NaticoHandler extends EventEmitter {
+  client
+  directory
+  modules
+  constructor(client, { directory }) {
     super();
     this.client = client;
     this.directory = directory;
   }
 
-  async load(thing: string) {
+  async load(thing) {
     let mod = await import("file://" + thing);
     mod = new mod.default();
 
@@ -19,13 +18,13 @@ export abstract class NaticoHandler extends EventEmitter {
 
     return mod;
   }
-  remove(id: string) {
+  remove(id) {
     const mod = this.modules.get(id.toString());
     if (!mod) return;
     this.deregister(mod);
     return mod;
   }
-  async reload(id: string) {
+  async reload(id) {
     const mod = this.modules.get(id);
     if (!mod) return;
     this.deregister(mod);
@@ -34,7 +33,7 @@ export abstract class NaticoHandler extends EventEmitter {
     const newMod = await this.load(filepath);
     return newMod;
   }
-  deregister(mod: NaticoModule) {
+  deregister(mod) {
     this.modules.delete(mod.id);
   }
   async reloadAll() {
@@ -44,7 +43,7 @@ export abstract class NaticoHandler extends EventEmitter {
 
     return this.modules;
   }
-  async loadALL(dirPath?: string) {
+  async loadALL(dirPath) {
     dirPath = await Deno.realPath(dirPath || this.directory);
     const entries = Deno.readDir(dirPath);
     for await (const entry of entries) {
@@ -56,7 +55,7 @@ export abstract class NaticoHandler extends EventEmitter {
       await this.loadALL(`${dirPath}/${entry.name}`);
     }
   }
-  register(mod: NaticoModule, filepath: string) {
+  register(mod, filepath) {
     mod.filepath = filepath;
     mod.handler = this;
     mod.client = this.client;

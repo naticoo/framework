@@ -1,5 +1,5 @@
 import { NaticoTaskHandler } from "./TaskHandler.ts";
-import { NaticoModule } from "../NaticoModule.ts";
+import { NaticoModule } from "../NaticoModule.js";
 import { NaticoClient } from "../NaticoClient.ts";
 export class NaticoTask extends NaticoModule {
   declare handler: NaticoTaskHandler;

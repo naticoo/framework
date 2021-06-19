@@ -1,5 +1,5 @@
 import { DiscordenoMessage } from "../../../deps.ts";
-import { NaticoModule } from "../NaticoModule.ts";
+import { NaticoModule } from "../NaticoModule.js";
 import { NaticoInhibitorHandler } from "./InhibitorHandler.ts";
 import { NaticoCommand } from "../commands/Command.ts";
 export class NaticoInhibitor extends NaticoModule {
@@ -9,10 +9,7 @@ export class NaticoInhibitor extends NaticoModule {
     super(id);
     this.priority = priority;
   }
-  exec(
-    _message: DiscordenoMessage,
-    _command: NaticoCommand,
-  ): Promise<boolean> | boolean {
+  exec(_message: DiscordenoMessage, _command: NaticoCommand): Promise<boolean> | boolean {
     throw new Error(`${this.id} no implementated`);
   }
 }

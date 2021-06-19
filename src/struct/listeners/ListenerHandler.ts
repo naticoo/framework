@@ -1,5 +1,5 @@
 import { NaticoClient } from "../NaticoClient.ts";
-import { NaticoHandler } from "../NaticoHandler.ts";
+import { NaticoHandler } from "../NaticoHandler.js";
 import { NaticoListener } from "./Listener.ts";
 import { Collection } from "../../../deps.ts";
 export class NaticoListenerHandler extends NaticoHandler {

@@ -1,5 +1,5 @@
 import { NaticoClient } from "../NaticoClient.ts";
-import { NaticoHandler } from "../NaticoHandler.ts";
+import { NaticoHandler } from "../NaticoHandler.js";
 import { NaticoTask } from "./Task.ts";
 import { Collection } from "../../../deps.ts";
 import { TaskHandlerEvents } from "../../util/Constants.ts";
