@@ -39,6 +39,7 @@ export interface NaticoCommandHandlerOptions {
   subType?: "single" | "multiple";
   commandUtil?: boolean;
   storeMessages?: boolean;
+  mentionPrefix?: boolean;
   // handleSlashes?: boolean;
 }
 export class NaticoCommandHandler extends NaticoHandler {
@@ -56,6 +57,7 @@ export class NaticoCommandHandler extends NaticoHandler {
   generator: ArgumentGenerator;
   commandUtil: boolean;
   storeMessages: boolean;
+  mentionPrefix: boolean;
   /**
    * Single means all subcommands in the same file; multiple means in every file
    */
@@ -76,6 +78,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       subType = "single",
       commandUtil = true,
       storeMessages = true,
+      mentionPrefix = true,
     }: NaticoCommandHandlerOptions // handleSlashes = true,
   ) {
     super(client, {
@@ -97,6 +100,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.subType = subType;
     this.commandUtils = new Collection();
     this.storeMessages = storeMessages;
+    this.mentionPrefix = mentionPrefix;
     this.start();
   }
   start() {
@@ -236,38 +240,25 @@ export class NaticoCommandHandler extends NaticoHandler {
       this.emit("commandError", message, command, e);
     }
   }
-  generateArgs(command: NaticoCommand, content: string | undefined) {
-    const args: ConvertedOptions = {};
-    if (command.options) {
-      for (const option of command.options) {
-        if (option?.name !== undefined) {
-          //@ts-ignoreansjkdfankjjksdf
-          args[option.name] = content;
-        }
-      }
-    }
-    return args;
-  }
 
   public async handleCommand(message: DiscordenoMessage) {
     if (!message?.content) return;
     if (message.isBot) return;
 
-    let prefixes;
-    if (typeof this.prefix == "function") prefixes = await this.prefix(message);
-    else prefixes = this.prefix;
+    const prefixes = typeof this.prefix == "function" ? await this.prefix(message) : this.prefix;
 
-    const ParsedPrefixes = [...prefixes, ...[`<@!${this.client.id}>`, `<@${this.client.id}>`]];
+    const parsedPrefixes = [...prefixes];
+    if (this.mentionPrefix) parsedPrefixes.push(`<@!${botId}>`, `<@${botId}>`);
 
-    for (const prefix of ParsedPrefixes) {
+    for (const prefix of parsedPrefixes) {
       if (await this.prefixCheck(prefix, message)) return;
     }
   }
   async prefixCheck(prefix: string, message: DiscordenoMessage) {
     if (message.content.toLowerCase().startsWith(prefix)) {
-      const command = message.content.toLowerCase().slice(prefix.length).trim().split(" ")[0];
-      const Command = this.findCommand(command);
-      if (Command) {
+      const commandName = message.content.toLowerCase().slice(prefix.length).trim().split(" ")[0];
+      const command = this.findCommand(commandName);
+      if (command) {
         if (this.commandUtil) {
           if (this.commandUtils.has(message.id)) {
             message.util = this.commandUtils.get(message.id)!;
@@ -277,8 +268,8 @@ export class NaticoCommandHandler extends NaticoHandler {
           }
         }
         message.util?.setParsed({ prefix, alias: command });
-        const args = message.content.slice(prefix.length).trim().slice(command.length).trim();
-        await this.runCommand(Command, message, args);
+        const args = message.content.slice(prefix.length).trim().slice(commandName.length).trim();
+        await this.runCommand(command, message, args);
         return true;
       }
     }
