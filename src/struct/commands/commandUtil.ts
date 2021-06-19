@@ -7,7 +7,7 @@ import { Collection, DiscordenoMessage, CreateMessage } from "../../../deps.ts";
  * @param {Message} message - Message that triggered the command.
  */
 
-export class CommandUtil {
+export class NaticoCommandUtil {
   handler: NaticoCommandHandler;
   message: DiscordenoMessage;
   shouldEdit: boolean;

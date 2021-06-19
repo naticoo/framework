@@ -4,12 +4,11 @@ import {
   DiscordApplicationCommandOptionTypes,
   DiscordenoMessage,
   EditGlobalApplicationCommand,
-  hasGuildPermissions,
   upsertSlashCommands,
   botId,
   getMissingGuildPermissions,
 } from "../../../deps.ts";
-import { CommandUtil } from "./commandUtil.ts";
+import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator } from "./ArgumentGenerator.ts";
 import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
@@ -39,12 +38,12 @@ export interface NaticoCommandHandlerOptions {
    */
   subType?: "single" | "multiple";
   commandUtil?: boolean;
-  storeMessages: boolean;
+  storeMessages?: boolean;
   // handleSlashes?: boolean;
 }
 export class NaticoCommandHandler extends NaticoHandler {
   declare modules: Collection<string, NaticoCommand | NaticoSubCommand>;
-  commandUtils: Collection<BigInt, CommandUtil>;
+  commandUtils: Collection<BigInt, NaticoCommandUtil>;
   cooldowns: Set<string>;
   IgnoreCD: string[];
   owners: string[];
@@ -273,7 +272,7 @@ export class NaticoCommandHandler extends NaticoHandler {
           if (this.commandUtils.has(message.id)) {
             message.util = this.commandUtils.get(message.id)!;
           } else {
-            message.util = new CommandUtil(this, message);
+            message.util = new NaticoCommandUtil(this, message);
             this.commandUtils.set(message.id, message.util);
           }
         }
