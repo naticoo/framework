@@ -1,6 +1,7 @@
 import { ApplicationCommandOption, DiscordenoMessage } from "../../discordeno_deps.ts";
+import { CommandUtil } from "../struct/commands/commandUtil.ts";
 export interface NaticoMessage extends DiscordenoMessage {
-  util?: any;
+  util: CommandUtil;
 }
 export interface Events {
   [name: string]: (...args: any[]) => Promise<any> | any;

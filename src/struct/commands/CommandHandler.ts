@@ -9,6 +9,7 @@ import {
   botId,
   getMissingGuildPermissions,
 } from "../../../deps.ts";
+import { CommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator } from "./ArgumentGenerator.ts";
 import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
@@ -17,8 +18,33 @@ import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
+export interface NaticoCommandHandlerOptions {
+  directory?: string;
+  prefix?: prefixFn | string | string[];
+  IgnoreCD?: string[];
+  owners?: string[];
+  /**
+   * cooldown in millieseconds
+   */
+  cooldown?: number;
+  rateLimit?: number;
+  superusers?: string[];
+  /**
+   * Commands will only work in guild channels with this on
+   */
+  guildonly?: boolean;
+  handleEdits?: boolean;
+  /**
+   * Single means all subcommands in the same file; multiple means in every file
+   */
+  subType?: "single" | "multiple";
+  commandUtil?: boolean;
+  storeMessages: boolean;
+  // handleSlashes?: boolean;
+}
 export class NaticoCommandHandler extends NaticoHandler {
-  modules: Collection<string, NaticoCommand | NaticoSubCommand>;
+  declare modules: Collection<string, NaticoCommand | NaticoSubCommand>;
+  commandUtils: Collection<BigInt, CommandUtil>;
   cooldowns: Set<string>;
   IgnoreCD: string[];
   owners: string[];
@@ -29,9 +55,12 @@ export class NaticoCommandHandler extends NaticoHandler {
   handleEdits: boolean;
   inhibitorHandler!: NaticoInhibitorHandler;
   generator: ArgumentGenerator;
+  commandUtil: boolean;
+  storeMessages: boolean;
   /**
    * Single means all subcommands in the same file; multiple means in every file
    */
+
   subType: "single" | "multiple";
   // handleSlashes: boolean;
   constructor(
@@ -46,34 +75,15 @@ export class NaticoCommandHandler extends NaticoHandler {
       guildonly = false,
       handleEdits = false,
       subType = "single",
-    }: // handleSlashes = true,
-    {
-      directory?: string;
-      prefix?: prefixFn | string | string[];
-      IgnoreCD?: string[];
-      owners?: string[];
-      /**
-       * cooldown in millieseconds
-       */
-      cooldown?: number;
-      rateLimit?: number;
-      superusers?: string[];
-      /**
-       * Commands will only work in guild channels with this on
-       */
-      guildonly?: boolean;
-      handleEdits?: boolean;
-      /**
-       * Single means all subcommands in the same file; multiple means in every file
-       */
-      subType?: "single" | "multiple";
-      // handleSlashes?: boolean;
-    }
+      commandUtil = true,
+      storeMessages = true,
+    }: NaticoCommandHandlerOptions // handleSlashes = true,
   ) {
     super(client, {
       directory,
     });
     // this.handleSlashes = handleSlashes;
+    this.commandUtil = commandUtil;
     this.handleEdits = handleEdits;
     this.client = client;
     this.prefix = prefix;
@@ -86,6 +96,8 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.modules = new Collection();
     this.generator = new ArgumentGenerator(this.client);
     this.subType = subType;
+    this.commandUtils = new Collection();
+    this.storeMessages = storeMessages;
     this.start();
   }
   start() {
@@ -242,28 +254,14 @@ export class NaticoCommandHandler extends NaticoHandler {
     if (!message?.content) return;
     if (message.isBot) return;
 
-    /**
-     * Allowing pings to be used as prefix!
-     */
-    if (message.content.startsWith(`<@!${this.client.id}>`)) {
-      const command = message.content.toLowerCase().slice(`<@!${this.client.id}>`.length).trim().split(" ")[0];
-      const Command = this.findCommand(command);
-
-      if (Command) {
-        const args = message.content.slice(`<@!${this.client.id}>`.length).trim().slice(command.length).trim();
-
-        return this.runCommand(Command, message, args);
-      }
-    }
     let prefixes;
     if (typeof this.prefix == "function") prefixes = await this.prefix(message);
     else prefixes = this.prefix;
-    if (Array.isArray(prefixes)) {
-      for (const prefix of prefixes) {
-        if (await this.prefixCheck(prefix, message)) return;
-      }
-    } else {
-      return this.prefixCheck(prefixes, message);
+
+    const ParsedPrefixes = [...prefixes, ...[`<@!${this.client.id}>`, `<@${this.client.id}>`]];
+
+    for (const prefix of ParsedPrefixes) {
+      if (await this.prefixCheck(prefix, message)) return;
     }
   }
   async prefixCheck(prefix: string, message: DiscordenoMessage) {
@@ -271,6 +269,15 @@ export class NaticoCommandHandler extends NaticoHandler {
       const command = message.content.toLowerCase().slice(prefix.length).trim().split(" ")[0];
       const Command = this.findCommand(command);
       if (Command) {
+        if (this.commandUtil) {
+          if (this.commandUtils.has(message.id)) {
+            message.util = this.commandUtils.get(message.id)!;
+          } else {
+            message.util = new CommandUtil(this, message);
+            this.commandUtils.set(message.id, message.util);
+          }
+        }
+        message.util?.setParsed({ prefix, alias: command });
         const args = message.content.slice(prefix.length).trim().slice(command.length).trim();
         await this.runCommand(Command, message, args);
         return true;

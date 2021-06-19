@@ -4,12 +4,11 @@ import { NaticoClient, NaticoModule } from "../mod.ts";
 export abstract class NaticoHandler extends EventEmitter {
   client: NaticoClient;
   directory: string;
-  modules: Collection<string, NaticoModule>;
+  abstract modules: Collection<string, NaticoModule> = new Collection();
   constructor(client: NaticoClient, { directory }: { directory: string }) {
     super();
     this.client = client;
     this.directory = directory;
-    this.modules = new Collection();
   }
 
   async load(thing: string) {

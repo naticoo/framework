@@ -1,6 +1,6 @@
 import { NaticoClient } from "./NaticoClient.ts";
 import { NaticoHandler } from "./NaticoHandler.ts";
-export class NaticoModule {
+export abstract class NaticoModule {
   handler!: NaticoHandler;
   client!: NaticoClient;
   id: string;
