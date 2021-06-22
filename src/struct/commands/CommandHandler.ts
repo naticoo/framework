@@ -270,7 +270,7 @@ export class NaticoCommandHandler extends NaticoHandler {
             this.commandUtils.set(message.id, message.util);
           }
         }
-        message.util?.setParsed({ prefix, alias: command });
+        message.util?.setParsed({ prefix, alias: commandName });
         const args = message.content.slice(prefix.length).trim().slice(commandName.length).trim();
         await this.runCommand(command, message, args);
         return true;

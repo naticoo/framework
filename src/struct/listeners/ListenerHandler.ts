@@ -16,7 +16,8 @@ export class NaticoListenerHandler extends NaticoHandler {
     this.emitters = new Collection();
     this.emitters.set("client", this.client);
   }
-  register(listener: any, filepath: string) {
+
+  register(listener: NaticoListener, filepath: string) {
     super.register(listener, filepath);
     listener.exec = listener.exec.bind(listener);
     this.addToEmitter(listener.id);

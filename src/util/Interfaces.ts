@@ -1,7 +1,7 @@
 import { ApplicationCommandOption, DiscordenoMessage } from "../../discordeno_deps.ts";
-import { CommandUtil } from "../struct/commands/commandUtil.ts";
+import { NaticoCommandUtil } from "../struct/commands/commandUtil.ts";
 export interface NaticoMessage extends DiscordenoMessage {
-  util: CommandUtil;
+  util: NaticoCommandUtil;
 }
 export interface Events {
   [name: string]: (...args: any[]) => Promise<any> | any;
@@ -16,7 +16,7 @@ export interface ArgOptions extends ApplicationCommandOption {
   match?: Matches;
   customType?: customType;
 }
-export type customType = (message: NaticoMessage, content: string) => any | Promise<any>;
+export type customType = (message: NaticoMessage | DiscordenoMessage | any, content: string) => any | Promise<any>;
 
 export enum Matches {
   rest,

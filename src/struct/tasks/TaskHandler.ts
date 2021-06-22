@@ -14,7 +14,9 @@ export class NaticoTaskHandler extends NaticoHandler {
     this.directory = directory;
     this.modules = new Collection();
   }
+
   register(task: NaticoTask, filepath: string) {
+    task.client = this.client;
     if (task.runOnStart) {
       try {
         task.exec();

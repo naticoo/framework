@@ -104,17 +104,17 @@ export class NaticoCommandUtil {
    * @param {string | APIMessage | MessageOptions} options - Options to use.
    * @returns {Promise<Message|Message[]>}
    */
-  async send(content: string | CreateMessage) {
+  async send(content: string | CreateMessage): Promise<DiscordenoMessage> {
     if (this.shouldEdit) {
       if (typeof content !== "string" && !content.embeds) content.embeds = [];
       if (typeof content !== "string" && !content.content) content.content = "";
 
-      return this.lastResponse.edit(content);
+      return (await this.lastResponse.edit(content)) as DiscordenoMessage;
     }
     const sent = await this.message.channel!.send(content);
     const lastSent = this.setLastResponse(sent as DiscordenoMessage);
     this.setEditable(!lastSent.attachments.length);
-    return sent;
+    return sent as DiscordenoMessage;
   }
 
   /**
@@ -134,7 +134,7 @@ export class NaticoCommandUtil {
    * @param {string|ReplyMessageOptions|MessageAdditions} options - Options to use.
    * @returns {Promise<Message|Message[]>}
    */
-  reply(options: string | CreateMessage) {
+  reply(options: string | CreateMessage): Promise<DiscordenoMessage> {
     let newOptions: any = {};
     if (typeof options == "string") {
       newOptions.content = options;
