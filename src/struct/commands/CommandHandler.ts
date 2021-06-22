@@ -6,7 +6,7 @@ import {
   EditGlobalApplicationCommand,
   upsertSlashCommands,
   botId,
-  getMissingGuildPermissions,
+  getMissingChannelPermissions,
 } from "../../../deps.ts";
 import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
@@ -146,8 +146,8 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
 
       if (command.userPermissions) {
-        const missingPermissions = await getMissingGuildPermissions(
-          message!.guildId,
+        const missingPermissions = await getMissingChannelPermissions(
+          message!.channelId,
           message.authorId,
           command.userPermissions
         );
@@ -157,7 +157,11 @@ export class NaticoCommandHandler extends NaticoHandler {
         }
       }
       if (command.clientPermissions) {
-        const missingPermissions = await getMissingGuildPermissions(message!.guildId, botId, command.clientPermissions);
+        const missingPermissions = await getMissingChannelPermissions(
+          message!.channelId,
+          botId,
+          command.clientPermissions
+        );
         if (missingPermissions[0]) {
           this.emit(CommandHandlerEvents.CLIENTPERMISSIONS, message, command, args, missingPermissions);
           return true;
