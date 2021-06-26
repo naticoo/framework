@@ -1,6 +1,6 @@
 //Code semi-taken from https://github.com/SkyBlockDev/discord-akairo/blob/master/src/struct/commands/CommandUtil.js
 import { NaticoCommandHandler } from "./CommandHandler.ts";
-import { Collection, DiscordenoMessage, CreateMessage } from "../../../deps.ts";
+import { Collection, DiscordenoMessage, CreateMessage, SlashCommandInteraction } from "../../../deps.ts";
 /**
  * Command utilities.
  * @param {CommandHandler} handler - The command handler.
@@ -16,37 +16,24 @@ export class NaticoCommandUtil {
   parsed!: {
     prefix: string;
     alias: string;
+    isSlash?: boolean;
   };
+  data: {
+    defered: boolean;
+    interaction?: SlashCommandInteraction;
+  } = {
+    defered: false,
+  };
+
   messages: Collection<any, any> = new Collection();
   constructor(handler: NaticoCommandHandler, message: DiscordenoMessage) {
-    /**
-     * The command handler.
-     * @type {CommandHandler}
-     */
     this.handler = handler;
 
-    /**
-     * Message that triggered the command.
-     * @type {Message}
-     */
     this.message = message;
 
-    /**
-     * Whether or not the last response should be edited.
-     * @type {boolean}
-     */
     this.shouldEdit = false;
 
-    /**
-     * The last response sent.
-     * @type {?Message}
-     */
-
     if (this.handler.storeMessages) {
-      /**
-       * Messages stored from prompts and prompt replies.
-       * @type {Collection<Snowflake, Message>}
-       */
       this.messages = new Collection();
     } else {
       this.messages.clear();
@@ -111,9 +98,20 @@ export class NaticoCommandUtil {
 
       return (await this.lastResponse.edit(content)) as DiscordenoMessage;
     }
-    const sent = await this.message.channel!.send(content);
-    const lastSent = this.setLastResponse(sent as DiscordenoMessage);
-    this.setEditable(!lastSent.attachments.length);
+    if (this.parsed.isSlash) {
+      const oldContent = content;
+      content = {
+        //@ts-ignore -
+        type: 4,
+        data: oldContent,
+      };
+    }
+    const sent = await this.message.send(content);
+    if (!this?.parsed?.isSlash) {
+      const lastSent = this.setLastResponse(sent as DiscordenoMessage);
+      this.setEditable(!lastSent?.attachments?.length);
+    }
+
     return sent as DiscordenoMessage;
   }
 
@@ -123,9 +121,9 @@ export class NaticoCommandUtil {
    * @returns {Promise<Message|Message[]>}
    */
   async sendNew(content: string | CreateMessage) {
-    const sent = await this.message.channel!.send(content);
+    const sent = await this.message.send(content);
     const lastSent = this.setLastResponse(sent as DiscordenoMessage);
-    this.setEditable(!lastSent.attachments.length);
+    this.setEditable(!lastSent?.attachments?.length);
     return sent;
   }
 
@@ -136,17 +134,20 @@ export class NaticoCommandUtil {
    */
   reply(options: string | CreateMessage): Promise<DiscordenoMessage> {
     let newOptions: any = {};
-    if (typeof options == "string") {
-      newOptions.content = options;
-    } else {
-      newOptions = options;
-    }
+    if (!this?.parsed?.isSlash) {
+      if (typeof options == "string") {
+        newOptions.content = options;
+      } else {
+        newOptions = options;
+      }
 
-    if (!this.shouldEdit) {
-      newOptions.messageReference = {
-        messageId: this.message.id,
-      };
-    }
+      if (!this.shouldEdit) {
+        newOptions.messageReference = {
+          messageId: this.message.id,
+        };
+      }
+    } else newOptions = options;
+
     return this.send(newOptions);
   }
 
