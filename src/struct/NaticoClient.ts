@@ -4,12 +4,17 @@ import { NaticoClientUtil } from "../util/ClientUtil.ts";
 export class NaticoClient extends EventEmitter {
   events: Events = {};
   util!: NaticoClientUtil;
-  id = botId;
+
   constructor(public config?: NaticoClientOptions) {
     super();
     this.events = {};
     if (this.config?.util) this.util = new NaticoClientUtil(this);
   }
+
+  get id() {
+    return botId;
+  }
+
   /**
    *
    * @param event Add a event to be emitted
