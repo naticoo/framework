@@ -2,6 +2,20 @@ import { DiscordenoMessage, PermissionStrings } from "../../../deps.ts";
 import { NaticoModule } from "../NaticoModule.js";
 import { NaticoCommandHandler } from "./CommandHandler.ts";
 import { ArgOptions, ConvertedOptions } from "../../util/Interfaces.ts";
+export interface NaticoCommandOptions {
+  options?: ArgOptions[];
+
+  name?: string;
+  aliases?: string[];
+  examples?: string[];
+  description?: string;
+  slash?: boolean;
+  category?: string;
+  ownerOnly?: boolean;
+  superUserOnly?: boolean;
+  clientPermissions?: PermissionStrings[];
+  userPermissions?: PermissionStrings[];
+}
 export class NaticoCommand extends NaticoModule {
   declare handler: NaticoCommandHandler;
   id: string;
@@ -33,20 +47,7 @@ export class NaticoCommand extends NaticoModule {
       options,
       clientPermissions,
       userPermissions,
-    }: {
-      options?: ArgOptions[];
-
-      name?: string;
-      aliases?: string[];
-      examples?: string[];
-      description?: string;
-      slash?: boolean;
-      category?: string;
-      ownerOnly?: boolean;
-      superUserOnly?: boolean;
-      clientPermissions?: PermissionStrings[];
-      userPermissions?: PermissionStrings[];
-    }
+    }: NaticoCommandOptions
   ) {
     super(id);
     this.options = options;

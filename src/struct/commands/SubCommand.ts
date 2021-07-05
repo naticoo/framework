@@ -1,7 +1,7 @@
-import { NaticoCommand } from "./Command.ts";
-import { PermissionStrings } from "../../../deps.ts";
-
-import { ArgOptions } from "../../util/Interfaces.ts";
+import { NaticoCommand, NaticoCommandOptions } from "./Command.ts";
+export interface NaticoSubCommandOptions extends NaticoCommandOptions {
+  subOf: string;
+}
 export class NaticoSubCommand extends NaticoCommand {
   subOf: string;
   constructor(
@@ -22,22 +22,7 @@ export class NaticoSubCommand extends NaticoCommand {
       subOf,
       clientPermissions,
       userPermissions,
-    }: {
-      options?: ArgOptions[];
-      subOf: string;
-      name?: string;
-      aliases?: string[];
-      examples?: string[];
-      description?: string;
-      enabled?: boolean;
-      slash?: boolean;
-      required?: boolean;
-      category?: string;
-      ownerOnly?: boolean;
-      superUserOnly?: boolean;
-      clientPermissions?: PermissionStrings[];
-      userPermissions?: PermissionStrings[];
-    }
+    }: NaticoSubCommandOptions
   ) {
     super(id, {
       name,

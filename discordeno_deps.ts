@@ -1,1 +1,1 @@
-export * from "https://raw.githubusercontent.com/discordeno/discordeno/a0087edecbb0a88eee0c76c27b71ca3b661f3cdf/mod.ts";
+export * from "https://deno.land/x/discordeno@12.0.0-rc.4/mod.ts";
