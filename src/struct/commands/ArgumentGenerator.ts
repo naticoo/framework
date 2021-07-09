@@ -2,14 +2,7 @@ import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoCommand } from "./Command.ts";
 
 import { Matches } from "../../util/Interfaces.ts";
-import {
-  DiscordApplicationCommandOptionTypes,
-  DiscordenoMessage,
-  fetchMembers,
-  Lexer,
-  longShortStrategy,
-  Parser,
-} from "../../../deps.ts";
+import { DiscordApplicationCommandOptionTypes, DiscordenoMessage, fetchMembers } from "../../../deps.ts";
 export class ArgumentGenerator {
   client: NaticoClient;
   constructor(client: NaticoClient) {
@@ -24,39 +17,39 @@ export class ArgumentGenerator {
    */
   async handleArgs(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
     if (!args) return {};
-    const lout = new Lexer(args)
-      .setQuotes([
-        ['"', '"'],
-        ["“", "”"],
-        ["「", "」"],
-      ])
-      .lex();
-    if (lout == null) {
-      return null;
-    }
+    // const lout = new Lexer(args)
+    //   .setQuotes([
+    //     ['"', '"'],
+    //     ["“", "”"],
+    //     ["「", "」"],
+    //   ])
+    //   .lex();
+    // if (lout == null) {
+    //   return null;
+    // }
 
-    const parser = new Parser(lout).setUnorderedStrategy(longShortStrategy());
-    const pout = parser.parse();
+    // const parser = new Parser(lout).setUnorderedStrategy(longShortStrategy());
+    // const pout = parser.parse();
     const data: any = {};
 
-    if (pout.flags) {
-      const items = Array.from(pout.flags);
-      for (const item in items) {
-        data[items[item]] = true;
-      }
-    }
-    if (pout.options) {
-      for (const [key, value] of pout.options) {
-        data[key] = value.join(" ");
-      }
-    }
-    const rest: string[] = [];
-    if (pout.ordered) {
-      const items = pout.ordered;
-      for (const item in items) {
-        rest.push(items[item].value);
-      }
-    }
+    // if (pout.flags) {
+    //   const items = Array.from(pout.flags);
+    //   for (const item in items) {
+    //     data[items[item]] = true;
+    //   }
+    // }
+    // if (pout.options) {
+    //   for (const [key, value] of pout.options) {
+    //     data[key] = value.join(" ");
+    //   }
+    // }
+    // const rest: string[] = [];
+    // if (pout.ordered) {
+    //   const items = pout.ordered;
+    //   for (const item in items) {
+    //     rest.push(items[item].value);
+    //   }
+    // }
     // if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
     //   let restContent = rest.slice(1).join(" ");
 
@@ -68,6 +61,7 @@ export class ArgumentGenerator {
     //     }
     //   }
     // }
+    const rest = args.split(" ");
     if (command?.options) {
       let restContent = rest.join(" ");
 

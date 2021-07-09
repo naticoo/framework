@@ -43,7 +43,7 @@ export interface NaticoCommandHandlerOptions {
   commandUtil?: boolean;
   storeMessages?: boolean;
   mentionPrefix?: boolean;
-  handleSlashes?: boolean;
+  handleSlashCommands?: boolean;
   // handleSlashes?: boolean;
 }
 export class NaticoCommandHandler extends NaticoHandler {
@@ -62,7 +62,7 @@ export class NaticoCommandHandler extends NaticoHandler {
   commandUtil: boolean;
   storeMessages: boolean;
   mentionPrefix: boolean;
-  handleSlashes: boolean;
+  handleSlashCommands: boolean;
   /**
    * Single means all subcommands in the same file; multiple means in every file
    */
@@ -84,13 +84,13 @@ export class NaticoCommandHandler extends NaticoHandler {
       commandUtil = true,
       storeMessages = true,
       mentionPrefix = true,
-      handleSlashes = false,
+      handleSlashCommands = false,
     }: NaticoCommandHandlerOptions
   ) {
     super(client, {
       directory,
     });
-    this.handleSlashes = handleSlashes;
+    this.handleSlashCommands = handleSlashCommands;
     this.commandUtil = commandUtil;
     this.handleEdits = handleEdits;
     this.client = client;
@@ -116,7 +116,7 @@ export class NaticoCommandHandler extends NaticoHandler {
         return this.handleCommand(message);
       });
     }
-    if (this.handleSlashes) {
+    if (this.handleSlashCommands) {
       this.client.addEvent("interactionCreate");
       this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
         if (data.type === DiscordInteractionTypes.ApplicationCommand)
