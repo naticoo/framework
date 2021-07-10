@@ -1,0 +1,7 @@
+[book]
+authors = ["SkyBlockDev"]
+language = "en"
+multilingual = false
+src = "docs"
+title = "Natico"
+default-theme = "Ayu"
