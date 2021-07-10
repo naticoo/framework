@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Extending
 
 this guide assumes that you are already using the basic-listeners bot

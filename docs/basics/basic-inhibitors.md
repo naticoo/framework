@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Basic inhibitor setup
 
 Inhibitors are a great way to prevent users from using certain commands or all

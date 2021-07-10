@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Basic listeners setup
 
 Listeners are a way of getting events and running code on them
