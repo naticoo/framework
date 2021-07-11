@@ -5,13 +5,13 @@
 import { EmbedAuthor, EmbedField, EmbedFooter, EmbedImage } from "../../deps.ts";
 const embedLimits = {
   title: 256,
-  description: 2048,
+  description: 4096,
   fieldName: 256,
   fieldValue: 1024,
   footerText: 2048,
   authorName: 256,
   fields: 25,
-  total: 6000,
+  total: 8048,
 };
 
 export class NaticoEmbed {
