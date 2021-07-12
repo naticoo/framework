@@ -6,10 +6,11 @@ interface CollectorOptions {
   max?: number;
 }
 
+type MessageCollection = Collection<bigint, DiscordenoMessage>;
 type CollectorFilter = (message: DiscordenoMessage) => boolean;
 
 export class MessageCollector extends EventEmitter {
-  private collection: Collection<bigint, DiscordenoMessage>;
+  private collection: MessageCollection;
   private collected: number;
   private ended: boolean;
 
@@ -50,4 +51,11 @@ export class MessageCollector extends EventEmitter {
 
     client.on("messageCreate", messageListener);
   }
+
+  collect = new Promise<MessageCollection>((resolve, reject) => {
+    this.once("end", (reason, collection) => {
+      if (reason !== "timeout") resolve(collection);
+      else reject(reason);
+    });
+  });
 }
