@@ -15,6 +15,7 @@ export interface prefixFn {
 export interface ArgOptions extends ApplicationCommandOption {
   match?: Matches;
   customType?: customType;
+  prompt?: string;
 }
 export type customType = (message: NaticoMessage | DiscordenoMessage | any, content: string) => any | Promise<any>;
 

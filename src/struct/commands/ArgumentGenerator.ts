@@ -1,7 +1,8 @@
 import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoCommand } from "./Command.ts";
 
-import { Matches } from "../../util/Interfaces.ts";
+import { Matches, ArgOptions } from "../../util/Interfaces.ts";
+import { MessageCollector } from "../../util/MessageCollector.ts";
 import { DiscordApplicationCommandOptionTypes, DiscordenoMessage, fetchMembers } from "../../../deps.ts";
 export class ArgumentGenerator {
   client: NaticoClient;
@@ -129,8 +130,34 @@ export class ArgumentGenerator {
         }
       }
     }
+
     return data;
   }
+
+  async handleMissingArgs(message: DiscordenoMessage, command: NaticoCommand, args: any) {
+    const argKeys = Object.keys(args);
+
+    let index = 0;
+
+    for await (const arg of command.options as ArgOptions[]) {
+      if (argKeys[index] !== arg.name && arg.required && arg.prompt) {
+        const prompt = await message.reply(`${arg.prompt}\nThe command be automatically cancelled in 30 seconds.`);
+
+        const collector = new MessageCollector(this.client, message, undefined, { time: 30 * 1000 });
+        const msg = (await collector.collect).first();
+
+        if (!msg) return null;
+
+        args[arg.name] = msg.content;
+        await prompt.delete();
+      }
+
+      index++;
+    }
+
+    return args;
+  }
+
   async parseUser(message: DiscordenoMessage, args: string) {
     const item = args.trim().split(" ")[0].replace(/ /gi, "");
 

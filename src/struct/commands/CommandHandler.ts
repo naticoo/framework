@@ -44,6 +44,7 @@ export interface NaticoCommandHandlerOptions {
   storeMessages?: boolean;
   mentionPrefix?: boolean;
   handleSlashCommands?: boolean;
+  handleArgs?: boolean;
   // handleSlashes?: boolean;
 }
 export class NaticoCommandHandler extends NaticoHandler {
@@ -56,6 +57,7 @@ export class NaticoCommandHandler extends NaticoHandler {
   guildonly: boolean;
   prefix: prefixFn | string | string[];
   handleEdits: boolean;
+  handleArgs: boolean;
   inhibitorHandler!: NaticoInhibitorHandler;
   generator: ArgumentGenerator;
   commandUtil: boolean;
@@ -82,6 +84,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       superusers = [],
       guildonly = false,
       handleEdits = false,
+      handleArgs = false,
       subType = "single",
       commandUtil = true,
       storeMessages = true,
@@ -95,6 +98,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.handleSlashCommands = handleSlashCommands;
     this.commandUtil = commandUtil;
     this.handleEdits = handleEdits;
+    this.handleArgs = handleArgs;
     this.client = client;
     this.prefix = prefix;
     this.owners = owners;
@@ -259,6 +263,7 @@ export class NaticoCommandHandler extends NaticoHandler {
     }
     return false;
   }
+
   /**
    *
    * @param command - Command that gets executed
@@ -301,7 +306,11 @@ export class NaticoCommandHandler extends NaticoHandler {
           }
         }
       }
-      const data = await this.generator.handleArgs(command, message, args);
+      let data = await this.generator.handleArgs(command, message, args);
+
+      if (this.handleArgs && command.options) data = await this.generator.handleMissingArgs(message, command, data);
+
+      if (!data) return this.emit("commandEnded", message, command, {}, null);
 
       if (savedOptions) command.options = savedOptions;
 
