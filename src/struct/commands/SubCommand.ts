@@ -16,6 +16,8 @@ export class NaticoSubCommand extends NaticoCommand {
       ownerOnly,
       superUserOnly,
       options,
+      ratelimit,
+      cooldown,
       /**
        * The main command
        */
@@ -36,6 +38,8 @@ export class NaticoSubCommand extends NaticoCommand {
       options,
       clientPermissions,
       userPermissions,
+      ratelimit,
+      cooldown,
     });
     this.subOf = subOf;
   }

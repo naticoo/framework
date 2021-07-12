@@ -23,14 +23,14 @@ import { createNaticoInteraction } from "../../util/createNaticoInteraction.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
-  IgnoreCD?: string[];
-  owners?: string[];
+  IgnoreCD?: bigint[];
+  owners?: bigint[];
   /**
    * cooldown in millieseconds
    */
   cooldown?: number;
-  rateLimit?: number;
-  superusers?: string[];
+  ratelimit?: number;
+  superusers?: bigint[];
   /**
    * Commands will only work in guild channels with this on
    */
@@ -49,11 +49,10 @@ export interface NaticoCommandHandlerOptions {
 export class NaticoCommandHandler extends NaticoHandler {
   declare modules: Collection<string, NaticoCommand | NaticoSubCommand>;
   commandUtils: Collection<BigInt, NaticoCommandUtil>;
-  cooldowns: Set<string>;
-  IgnoreCD: string[];
-  owners: string[];
+  IgnoreCD: bigint[];
+  owners: bigint[];
   cooldown: number;
-  superusers: string[];
+  superusers: bigint[];
   guildonly: boolean;
   prefix: prefixFn | string | string[];
   handleEdits: boolean;
@@ -63,6 +62,8 @@ export class NaticoCommandHandler extends NaticoHandler {
   storeMessages: boolean;
   mentionPrefix: boolean;
   handleSlashCommands: boolean;
+  ratelimit: number;
+  cooldowns: Collection<any, any>;
   /**
    * Single means all subcommands in the same file; multiple means in every file
    */
@@ -77,6 +78,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       IgnoreCD = [],
       owners = [],
       cooldown = 5000,
+      ratelimit = 3,
       superusers = [],
       guildonly = false,
       handleEdits = false,
@@ -99,15 +101,18 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.cooldown = cooldown;
     this.superusers = [...owners, ...superusers];
     this.IgnoreCD = [...IgnoreCD, ...this.superusers];
-    this.cooldowns = new Set();
     this.guildonly = guildonly;
-    this.modules = new Collection();
-    this.generator = new ArgumentGenerator(this.client);
+    this.ratelimit = ratelimit;
     this.subType = subType;
-    this.commandUtils = new Collection();
+
     this.storeMessages = storeMessages;
     this.mentionPrefix = mentionPrefix;
     this.start();
+
+    this.commandUtils = new Collection();
+    this.modules = new Collection();
+    this.generator = new ArgumentGenerator(this.client);
+    this.cooldowns = new Collection();
   }
   start() {
     if (this.handleEdits) {
@@ -128,17 +133,61 @@ export class NaticoCommandHandler extends NaticoHandler {
       return this.handleCommand(message);
     });
   }
+  // Code taken from https://github.com/discord-akairo/discord-akairo/blob/master/src/struct/commands/CommandHandler.js#L705
+  // Modified to work with natico
+  runCooldowns(message: DiscordenoMessage, command: NaticoCommand) {
+    const id = message.authorId;
+    if (this.IgnoreCD.includes(message.authorId)) return false;
+
+    const time = command.cooldown != null ? command.cooldown : this.cooldown;
+    if (!time) return false;
+
+    const endTime = message.timestamp + time;
+
+    if (!this.cooldowns.has(id)) this.cooldowns.set(id, {});
+
+    if (!this.cooldowns.get(id)[command.id]) {
+      this.cooldowns.get(id)[command.id] = {
+        timer: setTimeout(() => {
+          if (this.cooldowns.get(id)[command.id]) {
+            clearTimeout(this.cooldowns.get(id)[command.id].timer);
+          }
+          this.cooldowns.get(id)[command.id] = null;
+
+          if (!Object.keys(this.cooldowns.get(id)).length) {
+            this.cooldowns.delete(id);
+          }
+        }, time),
+        end: endTime,
+        uses: 0,
+      };
+    }
+
+    const entry = this.cooldowns.get(id)[command.id];
+
+    if (entry.uses >= command.ratelimit) {
+      const end = this.cooldowns.get(id)[command.id].end;
+      const diff = end - message.timestamp;
+
+      this.emit(CommandHandlerEvents.COOLDOWN, message, command, diff);
+      return true;
+    }
+
+    entry.uses++;
+    return false;
+  }
+
   async commandChecks(command: NaticoCommand, message: DiscordenoMessage, args: string | undefined) {
     if (this.inhibitorHandler) {
       if (await this.inhibitorHandler.runChecks(message, command)) return true;
     }
 
     const authorId = message.authorId.toString();
-    if (!this.superusers.includes(authorId)) {
+    if (!this.superusers.includes(message.authorId)) {
       //Otherwise you would get on cooldown
       if (command instanceof NaticoSubCommand == false)
         if (this.cooldowns.has(authorId)) {
-          if (!this.IgnoreCD.includes(authorId)) {
+          if (!this.IgnoreCD.includes(message.authorId)) {
             this.emit(CommandHandlerEvents.COOLDOWN, message, command, args);
             return true;
           }
@@ -174,15 +223,19 @@ export class NaticoCommandHandler extends NaticoHandler {
         }
       }
     }
+    if (this.runCooldowns(message, command)) {
+      console.log("cooldowns i guess idk tbh anymore");
+      return true;
+    }
     if (command.ownerOnly) {
-      if (!this.owners.includes(authorId)) {
+      if (!this.owners.includes(message.authorId)) {
         this.emit(CommandHandlerEvents.OWNERONLY, message, command, args);
         return true;
       }
     }
 
     if (command.superUserOnly) {
-      if (!this.superusers.includes(authorId)) {
+      if (!this.superusers.includes(message.authorId)) {
         this.emit(CommandHandlerEvents.SUPERUSERRONLY, message, command, args);
         return true;
       }
@@ -245,8 +298,6 @@ export class NaticoCommandHandler extends NaticoHandler {
       /**
        * Adding the user to a set and deleting them later!
        */
-      this.cooldowns.add(message.authorId.toString());
-      setTimeout(() => this.cooldowns.delete(message.authorId.toString()), this.cooldown);
     } catch (e: unknown) {
       this.emit("commandError", message, command, e);
     }
@@ -287,6 +338,7 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
     }
   }
+
   /**
    * Simple function to find a command could be useful outside of the handler
    * @param command - Command you want to search for
@@ -394,12 +446,6 @@ export class NaticoCommandHandler extends NaticoHandler {
     } catch (e) {
       this.emit("commandError", interaction, command, e);
     }
-
-    /**
-     * Adding the user to a set and deleting them later!
-     */
-    this.cooldowns.add(interaction.authorId.toString());
-    setTimeout(() => this.cooldowns.delete(interaction.authorId.toString()), this.cooldown);
   }
   setInhibitorHandler(inhibitorHandler: NaticoInhibitorHandler) {
     this.inhibitorHandler = inhibitorHandler;
