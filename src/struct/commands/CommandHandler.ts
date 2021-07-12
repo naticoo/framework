@@ -137,6 +137,24 @@ export class NaticoCommandHandler extends NaticoHandler {
       return this.handleCommand(message);
     });
   }
+
+  get categories() {
+    const categories = new Collection<string, Collection<string, NaticoCommand>>();
+    for (const data of this.modules.values()) {
+      if (data instanceof NaticoSubCommand == false) {
+        const exists = categories.get(data.category!);
+        if (exists) exists.set(data.id, data);
+        else {
+          const cc = new Collection<string, NaticoCommand>();
+          cc.set(data.id, data as NaticoCommand);
+
+          categories.set(data.category!, cc);
+        }
+      }
+    }
+    return categories;
+  }
+
   // Code taken from https://github.com/discord-akairo/discord-akairo/blob/master/src/struct/commands/CommandHandler.js#L705
   // Modified to work with natico
   runCooldowns(message: DiscordenoMessage, command: NaticoCommand) {
