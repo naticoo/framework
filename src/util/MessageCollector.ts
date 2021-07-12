@@ -4,6 +4,7 @@ import { NaticoClient } from "../struct/NaticoClient.ts";
 interface CollectorOptions {
   time?: number;
   max?: number;
+  errors?: Array<'timeout' | 'limit'>;
 }
 
 type MessageCollection = Collection<bigint, DiscordenoMessage>;
@@ -13,6 +14,7 @@ export class MessageCollector extends EventEmitter {
   private collection: MessageCollection;
   private collected: number;
   private ended: boolean;
+  private options: CollectorOptions;
 
   constructor(
     client: NaticoClient,
@@ -20,12 +22,13 @@ export class MessageCollector extends EventEmitter {
     filter: CollectorFilter = () => {
       return true;
     },
-    options: CollectorOptions = { max: 1, time: 10 * 1000 }
+    options: CollectorOptions = { max: 1, time: 10 * 1000, errors: [] }
   ) {
     super();
     this.collection = new Collection();
     this.collected = 0;
     this.ended = false;
+    this.options = options;
 
     const messageListener = (msg: DiscordenoMessage) => {
       if (message.channelId === msg.channelId && filter(msg) === true) {
@@ -54,7 +57,7 @@ export class MessageCollector extends EventEmitter {
 
   collect = new Promise<MessageCollection>((resolve, reject) => {
     this.once("end", (reason, collection) => {
-      if (reason !== "timeout") resolve(collection);
+      if (!this.options.errors?.includes(reason)) resolve(collection);
       else reject(reason);
     });
   });
