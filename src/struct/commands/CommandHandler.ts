@@ -224,7 +224,6 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
     }
     if (this.runCooldowns(message, command)) {
-      console.log("cooldowns i guess idk tbh anymore");
       return true;
     }
     if (command.ownerOnly) {
