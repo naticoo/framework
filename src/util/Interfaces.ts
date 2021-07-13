@@ -14,7 +14,9 @@ export interface prefixFn {
 }
 export interface ArgOptions extends ApplicationCommandOption {
   match?: Matches;
+  //The custom function that will be ran instead of the default argument function
   customType?: customType;
+  //The prompt that will be given when a user doesnt provide that argument
   prompt?: string;
 }
 export type customType = (message: NaticoMessage | DiscordenoMessage | any, content: string) => any | Promise<any>;

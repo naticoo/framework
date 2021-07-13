@@ -92,7 +92,7 @@ export class ArgumentGenerator {
     return data;
   }
 
-  async handleMissingArgs(message: DiscordenoMessage, command: NaticoCommand, args: any) {
+  async handleMissingArgs(message: DiscordenoMessage, command: NaticoCommand, args: Arguments) {
     const argKeys = Object.keys(args);
 
     let index = 0;
@@ -105,8 +105,8 @@ export class ArgumentGenerator {
         const msg = (await collector.collect).first();
 
         if (!msg) return null;
-
-        args[arg.name] = msg.content;
+        const fn = arg.customType ? arg.customType : this.arguments.get(arg.type.toString())!;
+        args[arg.name] = (await fn(msg, msg.content))[0];
         await prompt.delete();
       }
 
