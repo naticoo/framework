@@ -12,7 +12,7 @@ import {
 } from "../../../deps.ts";
 import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
-import { ArgumentGenerator } from "./ArgumentGenerator.ts";
+import { ArgumentGenerator, Arguments } from "./ArgumentGenerator.ts";
 import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
 import { NaticoCommand } from "./Command.ts";
 import { NaticoSubCommand } from "./SubCommand.ts";
@@ -308,7 +308,8 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
       let data = await this.generator.handleArgs(command, message, args);
 
-      if (this.handleArgs && command.options) data = await this.generator.handleMissingArgs(message, command, data);
+      if (this.handleArgs && command.options)
+        data = (await this.generator.handleMissingArgs(message, command, data)) as Arguments;
 
       if (!data) return this.emit("commandEnded", message, command, {}, null);
 
