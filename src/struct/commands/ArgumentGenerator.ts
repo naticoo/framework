@@ -117,6 +117,7 @@ export class ArgumentGenerator {
   }
 
   boolean(_: DiscordenoMessage, args: string) {
+    if (!args) return [undefined, args] as ReturnType;
     const trues = ["true", "on", "enable"];
     const falses = ["false", "off", "disable"];
     if (trues.includes(args.split(" ")[0])) {
@@ -130,10 +131,10 @@ export class ArgumentGenerator {
   }
 
   async parseUser(message: DiscordenoMessage, args: string) {
-    const item = args.trim().split(" ")[0].replace(/ /gi, "");
-
+    if (!args) return [undefined, args] as ReturnType;
+    const item = args?.trim()?.split(" ")[0]?.replace(/ /gi, "");
     const reg = /<@!?(\d{17,19})>/;
-    const id = args.match(reg);
+    const id = args?.match(reg);
 
     let user = message.guild!.members.find((member) => {
       if (id && member.id == BigInt(id[1])) return true;
@@ -160,6 +161,7 @@ export class ArgumentGenerator {
   }
 
   parseChannel(message: DiscordenoMessage, args: string) {
+    if (!args) return [undefined, args] as ReturnType;
     const guild = message.guild;
 
     const id = args.split(" ")[0].replace(/<|#|!|>|&|/gi, "");
@@ -176,6 +178,7 @@ export class ArgumentGenerator {
   }
 
   parseRole(message: DiscordenoMessage, args: string) {
+    if (!args) return [undefined, args] as ReturnType;
     const guild = message.guild;
 
     const id = args.split(" ")[0].replace(/<|@|!|>|&|/gi, "");
