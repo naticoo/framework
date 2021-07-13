@@ -3,12 +3,46 @@ import { NaticoCommand } from "./Command.ts";
 
 import { Matches, ArgOptions } from "../../util/Interfaces.ts";
 import { MessageCollector } from "../../util/MessageCollector.ts";
-import { DiscordApplicationCommandOptionTypes, DiscordenoMessage, fetchMembers } from "../../../deps.ts";
+import {
+  DiscordenoMessage,
+  fetchMembers,
+  Collection,
+  DiscordenoRole,
+  DiscordenoChannel,
+  DiscordenoMember,
+} from "../../../deps.ts";
+
+// All the items the parsers return
+export type returnItems = DiscordenoRole | DiscordenoChannel | DiscordenoMember | number | string | boolean | undefined;
+
+export type Argument = (
+  message: DiscordenoMessage,
+  args: string
+) => [returnItems, string | undefined] | Promise<[returnItems, string | undefined]>;
+
+export type ReturnType = [returnItems, string | undefined];
+
+export type Arguments = { [name: string]: returnItems };
+
 export class ArgumentGenerator {
   client: NaticoClient;
+  arguments: Collection<string, Argument>;
   constructor(client: NaticoClient) {
     this.client = client;
+    this.arguments = new Collection();
+    this.start();
   }
+
+  start() {
+    //I would load the files dynamically but deno file loading is way to slow for that to be a good aproach
+    this.arguments.set("3", (_, c) => [c, undefined]);
+    this.arguments.set("4", (_, c) => [parseInt(c), undefined]);
+    this.arguments.set("5", this.boolean);
+    this.arguments.set("6", this.parseUser);
+    this.arguments.set("7", this.parseChannel);
+    this.arguments.set("8", this.parseRole);
+  }
+
   /**
    * Parses the command arguments :stonks:
    * @param command
@@ -18,103 +52,27 @@ export class ArgumentGenerator {
    */
   async handleArgs(command: NaticoCommand, message: DiscordenoMessage, args?: string) {
     if (!args) return {};
-    // const lout = new Lexer(args)
-    //   .setQuotes([
-    //     ['"', '"'],
-    //     ["“", "”"],
-    //     ["「", "」"],
-    //   ])
-    //   .lex();
-    // if (lout == null) {
-    //   return null;
-    // }
-
-    // const parser = new Parser(lout).setUnorderedStrategy(longShortStrategy());
-    // const pout = parser.parse();
-    const data: any = {};
-
-    // if (pout.flags) {
-    //   const items = Array.from(pout.flags);
-    //   for (const item in items) {
-    //     data[items[item]] = true;
-    //   }
-    // }
-    // if (pout.options) {
-    //   for (const [key, value] of pout.options) {
-    //     data[key] = value.join(" ");
-    //   }
-    // }
-    // const rest: string[] = [];
-    // if (pout.ordered) {
-    //   const items = pout.ordered;
-    //   for (const item in items) {
-    //     rest.push(items[item].value);
-    //   }
-    // }
-    // if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
-    //   let restContent = rest.slice(1).join(" ");
-
-    //   for (const option of command.options) {
-    //     if (option.name == rest[0]) {
-    //       for (const option of command.options) {
-    //         [data, args, restContent] = await this.generateArgs(message, args, restContent, option, data);
-    //       }
-    //     }
-    //   }
-    // }
+    const data: Arguments = {};
     const rest = args.split(" ");
     if (command?.options) {
-      let restContent = rest.join(" ");
+      let restContent: string | undefined = rest.join(" ");
 
       for (const option of command.options) {
         const name = option.name;
         if (option.type && !option.customType) {
-          if (option.type === DiscordApplicationCommandOptionTypes.String) {
-            data[name] = restContent;
-          }
-          if (option.type === DiscordApplicationCommandOptionTypes.Integer) {
-            data[name] = parseInt(restContent);
-          }
-          if (option.type === DiscordApplicationCommandOptionTypes.Boolean) {
-            //TODO: Actually extract it
-            const trues = ["true", "on", "enable"];
-            const falses = ["false", "off", "disable"];
-            if (trues.includes(restContent.split(" ")[0])) {
-              restContent = restContent.split(" ").slice(1).join(" ");
-              data[name] = true;
-            } else if (falses.includes(restContent.split(" ")[0])) {
-              restContent = restContent.split(" ").slice(1).join(" ");
-              data[name] = false;
-            }
-          }
-          if (option.type === DiscordApplicationCommandOptionTypes.User) {
-            const member = this.parseUser(message, restContent);
-            if (member) {
-              data[name] = member;
-              restContent = restContent.split(" ").slice(1).join(" ");
-            }
-          }
-          if (option.type === DiscordApplicationCommandOptionTypes.Channel) {
-            const channel = this.parseChannel(message, restContent);
-            if (channel?.id) {
-              data[name] = channel;
-              restContent = restContent.split(" ").slice(1).join(" ");
-            }
-          }
-          if (option.type === DiscordApplicationCommandOptionTypes.Role) {
-            const role = this.parseRole(message, restContent);
-            if (role?.id) {
-              data[name] = role;
-              restContent = restContent.split(" ").slice(1).join(" ");
-            }
-          }
+          const res: [returnItems, string | undefined] = await this.arguments.get(option.type.toString())!(
+            message,
+            restContent as string
+          );
+          restContent = res[1];
+          data[name] = res[0];
         }
 
         //Rest means that everything will be cut off
         if (option?.match == Matches.rest) {
           data[name] = args;
           if (option.customType) {
-            const info: string | any[] = await option.customType(message, restContent);
+            const info: string = await option.customType(message, restContent as string);
             if (Array.isArray(info) && info.length == 2) {
               restContent = info[1];
 
@@ -158,6 +116,19 @@ export class ArgumentGenerator {
     return args;
   }
 
+  boolean(_: DiscordenoMessage, args: string) {
+    const trues = ["true", "on", "enable"];
+    const falses = ["false", "off", "disable"];
+    if (trues.includes(args.split(" ")[0])) {
+      args = args.split(" ").slice(1).join(" ");
+      return [true, args] as ReturnType;
+    } else if (falses.includes(args.split(" ")[0])) {
+      args = args.split(" ").slice(1).join(" ");
+      return [false, args] as ReturnType;
+    }
+    return [undefined, args] as ReturnType;
+  }
+
   async parseUser(message: DiscordenoMessage, args: string) {
     const item = args.trim().split(" ")[0].replace(/ /gi, "");
 
@@ -173,7 +144,8 @@ export class ArgumentGenerator {
       if (member.tag.toLowerCase().includes(item)) true;
       return false;
     });
-    if (user) return user;
+
+    if (user) return [user, args.split(" ").slice(1).join(" ")] as ReturnType;
 
     if (id && id[1]) {
       user = (
@@ -183,9 +155,10 @@ export class ArgumentGenerator {
         }).catch(() => undefined)
       )?.first();
     }
-
-    return user;
+    if (user) return [user, args.split(" ").slice(1).join(" ")] as ReturnType;
+    return [undefined, args] as ReturnType;
   }
+
   parseChannel(message: DiscordenoMessage, args: string) {
     const guild = message.guild;
 
@@ -197,9 +170,11 @@ export class ArgumentGenerator {
         return false;
       });
 
-      return channel;
+      return [channel, args.split(" ").slice(1).join(" ")] as ReturnType;
     }
+    return [undefined, args] as ReturnType;
   }
+
   parseRole(message: DiscordenoMessage, args: string) {
     const guild = message.guild;
 
@@ -211,18 +186,8 @@ export class ArgumentGenerator {
         return false;
       });
 
-      return role;
+      return [role, args.split(" ").slice(1).join(" ")] as ReturnType;
     }
+    return [undefined, args] as ReturnType;
   }
 }
-/*
-export enum ArgumentTypes {
-  subCommand = 1,
-  subCOmmandGroup = 2,
-  string = 3,
-  interger = 4,
-  boolean = 5,
-  user = 6,
-  channel = 7,
-}
-*/

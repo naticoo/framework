@@ -1,7 +1,8 @@
 import { DiscordenoMessage, PermissionStrings } from "../../../deps.ts";
 import { NaticoModule } from "../NaticoModule.js";
 import { NaticoCommandHandler } from "./CommandHandler.ts";
-import { ArgOptions, ConvertedOptions } from "../../util/Interfaces.ts";
+import { ArgOptions } from "../../util/Interfaces.ts";
+import { Arguments } from "./ArgumentGenerator.ts";
 export interface NaticoCommandOptions {
   options?: ArgOptions[];
   name?: string;
@@ -72,7 +73,7 @@ export class NaticoCommand extends NaticoModule {
 
     this.category = category || "general";
   }
-  exec(_message: DiscordenoMessage, _options: ConvertedOptions | undefined | null): Promise<any> | any {
+  exec(_message: DiscordenoMessage, _options: Arguments): Promise<any> | any {
     throw new Error(`NOT_CREATED ${this.id}`);
   }
 }
