@@ -4,7 +4,7 @@ import { NaticoClient } from "../struct/NaticoClient.ts";
 interface CollectorOptions {
   time?: number;
   max?: number;
-  errors?: Array<'timeout' | 'limit'>;
+  errors?: Array<"timeout" | "limit">;
 }
 
 type MessageCollection = Collection<bigint, DiscordenoMessage>;
