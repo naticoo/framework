@@ -59,7 +59,7 @@ export class ArgumentGenerator {
 
       for (const option of command.options) {
         const name = option.name;
-        if (option.type && !option.customType) {
+        if (option.type && !option.customType && option.type !== 1) {
           const res: [returnItems, string | undefined] = await this.arguments.get(option.type.toString())!(
             message,
             restContent as string
