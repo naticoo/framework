@@ -22,3 +22,7 @@ export enum TaskHandlerEvents {
   /** task - error */
   TASKERROR = "taskError",
 }
+export enum ListenerHandlerEvents {
+  /** task - error */
+  LISTENERERROR = "ListenerError",
+}

@@ -2,6 +2,7 @@ import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoHandler } from "../NaticoHandler.js";
 import { NaticoListener } from "./Listener.ts";
 import { Collection } from "../../../deps.ts";
+import { ListenerHandlerEvents } from "../../util/Constants.ts";
 export class NaticoListenerHandler extends NaticoHandler {
   declare modules: Collection<string, NaticoListener>;
   emitters: Collection<string, any>;
@@ -30,7 +31,13 @@ export class NaticoListenerHandler extends NaticoHandler {
 
     const emitter = this.emitters.get(listener.emitter);
     if (emitter == this.client) this.client.addEvent(listener.event);
-    emitter.on(listener.event, listener.exec);
+    emitter.on(listener.event, async (...args: any[]) => {
+      try {
+        await listener.exec(...args);
+      } catch (e) {
+        this.emit(ListenerHandlerEvents.LISTENERERROR, e, listener);
+      }
+    });
     return listener;
   }
   setEmitters(emitters: any) {
