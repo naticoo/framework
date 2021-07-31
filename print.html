@@ -157,7 +157,7 @@ export * from &quot;https://deno.land/x/natico/mod.ts&quot;;
 <pre><code class="language-ts">//mod.ts
 import { NaticoCommandHandler, NaticoClient } from &quot;./deps.ts&quot;;
 class BotClient extends NaticoClient {
-  constructor(public options?: NaticoClientOptions) {
+  constructor(public options: NaticoClientOptions) {
     super(options);
   }
   // This is the command handler that will be handling your commands
