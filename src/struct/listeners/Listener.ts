@@ -1,6 +1,6 @@
 import { NaticoModule } from "../NaticoModule.js";
 import { NaticoListenerHandler } from "./ListenerHandler.ts";
-export class NaticoListener extends NaticoModule {
+export abstract class NaticoListener extends NaticoModule {
   declare handler: NaticoListenerHandler;
   event: string;
   emitter: string;
@@ -9,7 +9,5 @@ export class NaticoListener extends NaticoModule {
     this.emitter = emitter;
     this.event = event;
   }
-  exec(..._args: any[]) {
-    throw new Error(`${this.id} no implementated`);
-  }
+  abstract exec(...args: any[]): unknown | Promise<unknown>;
 }

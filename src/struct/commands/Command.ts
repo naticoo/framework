@@ -19,7 +19,7 @@ export interface NaticoCommandOptions {
   //Cooldown in ms
   cooldown?: number;
 }
-export class NaticoCommand extends NaticoModule {
+export abstract class NaticoCommand extends NaticoModule {
   declare handler: NaticoCommandHandler;
   id: string;
   category: string;

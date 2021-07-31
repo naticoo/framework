@@ -2,7 +2,7 @@ import { DiscordenoMessage } from "../../../deps.ts";
 import { NaticoModule } from "../NaticoModule.js";
 import { NaticoInhibitorHandler } from "./InhibitorHandler.ts";
 import { NaticoCommand } from "../commands/Command.ts";
-export class NaticoInhibitor extends NaticoModule {
+export abstract class NaticoInhibitor extends NaticoModule {
   declare handler: NaticoInhibitorHandler;
   priority: number;
   constructor(id: string, { priority = 1 }: { priority?: number }) {

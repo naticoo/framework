@@ -1,6 +1,4 @@
-/**
- * Code taken from https://github.com/discordeno/template/blob/main/src/utils/Embed.ts not modified
- */
+/** Source: 2021 Discordeno - https://github.com/discordeno/template/blob/main/src/utils/Embed.ts not modified */
 
 import { EmbedAuthor, EmbedField, EmbedFooter, EmbedImage } from "../../deps.ts";
 const embedLimits = {
@@ -13,7 +11,7 @@ const embedLimits = {
   fields: 25,
   total: 8048,
 };
-
+//Prefixes with Natico to not cause type errors
 export class NaticoEmbed {
   /** The amount of characters in the embed. */
   currentTotal = 0;

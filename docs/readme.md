@@ -21,7 +21,7 @@ Then create a mod.ts file with the following code
 //mod.ts
 import { NaticoCommandHandler, NaticoClient } from "./deps.ts";
 class BotClient extends NaticoClient {
-  constructor(public options?: NaticoClientOptions) {
+  constructor(public options: NaticoClientOptions) {
     super(options);
   }
   // This is the command handler that will be handling your commands

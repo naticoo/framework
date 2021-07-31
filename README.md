@@ -13,7 +13,7 @@ Natico is designed to be a low level and extendable framework for [Discordeno](h
 ```ts
 import { NaticoClient, NaticoClientOptions, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
 class BotClient extends NaticoClient {
-  constructor(public options?: NaticoClientOptions) {
+  constructor(public options: NaticoClientOptions) {
     super(options);
   }
   commandHandler: NaticoCommandHandler = new NaticoCommandHandler(this, {
@@ -42,6 +42,10 @@ botClient.start();
 - Listeners
   - Natico comes included with a listener(events) handler which makes it very
     easy to use events
+- Inhibitors
+  - Natico has easy to use inhibitors
+- Interaction handling
+  - Theres built in button and interaction support
 - And much more
 
 This project is inspired by [discord-akairo](https://github.com/discord-akairo/discord-akairo)

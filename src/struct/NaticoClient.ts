@@ -1,14 +1,16 @@
 import { BotConfig, botId, EventEmitter, startBot } from "../../deps.ts";
 import { Events } from "../util/Interfaces.ts";
 import { NaticoClientUtil } from "../util/ClientUtil.ts";
-export class NaticoClient extends EventEmitter {
+export abstract class NaticoClient extends EventEmitter {
   events: Events = {};
+  config: BotConfig;
   util!: NaticoClientUtil;
 
-  constructor(public config?: NaticoClientOptions) {
+  constructor(config: NaticoClientOptions) {
     super();
+    this.config = config;
     this.events = {};
-    if (this.config?.util) this.util = new NaticoClientUtil(this);
+    if (config?.util) this.util = new NaticoClientUtil(this);
   }
 
   get id() {
@@ -16,21 +18,17 @@ export class NaticoClient extends EventEmitter {
   }
 
   /**
-   *
    * @param event Add a event to be emitted
    */
   addEvent(event: string) {
-    this.events[event] = (...args: any[]) => this.emit(event, ...args);
+    this.events[event] = (...args: unknown[]) => this.emit(event, ...args);
   }
   /**
-   *
-   * @param token The token used for logging in
-   * @returns
+   * Start the natico bot
    */
-  async login(token = this.config?.token) {
-    if (!token) throw new Error("TOKEN_NOT_PROVIDED");
-    await startBot({
-      token,
+  async login() {
+    return await startBot({
+      token: this.config.token,
       intents: this.config?.intents ?? [],
       eventHandlers: this.events,
     });
