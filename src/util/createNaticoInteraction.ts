@@ -6,13 +6,14 @@ import {
   sendInteractionResponse,
   DiscordenoInteractionResponse,
   editSlashResponse,
+  snowflakeToBigint,
 } from "../../deps.ts";
 import { NaticoCommandUtil } from "../struct/commands/commandUtil.ts";
 export async function createNaticoInteraction(
   interaction: SlashCommandInteraction,
   handler: any
 ): Promise<DiscordenoMessage> {
-  const guildId = BigInt(interaction.guildId!);
+  const guildId = snowflakeToBigint(interaction.guildId ?? "0");
   const member = await structures.createDiscordenoMember(interaction.member!, guildId);
 
   const channelId = BigInt(interaction.channelId!);
@@ -24,7 +25,7 @@ export async function createNaticoInteraction(
   };
 
   const message: DiscordenoMessage | any = {
-    id: BigInt(interaction.id),
+    id: snowflakeToBigint(interaction.id),
     isBot: false,
     //   bitfield: interaction.bitfield,
     get tag() {
@@ -35,12 +36,12 @@ export async function createNaticoInteraction(
     },
     guildId: guildId,
     channelId: channelId,
-    authorId: BigInt(interaction.member!.user.id),
+    authorId: snowflakeToBigint(interaction.member!.user.id),
     content: "",
     mentionedUserIds: [],
     mentionedRoleIds: [],
     get timestamp() {
-      return Number(BigInt(this.id) / 4194304n + 1420070400000n);
+      return Number(snowflakeToBigint(this.id) / 4194304n + 1420070400000n);
     },
     member: member,
     get channel() {
