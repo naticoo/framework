@@ -73,7 +73,4 @@ export abstract class NaticoCommand extends NaticoModule {
 
     this.category = category || "general";
   }
-  exec(_message: DiscordenoMessage, _options: Arguments): Promise<any> | any {
-    throw new Error(`NOT_CREATED ${this.id}`);
-  }
 }

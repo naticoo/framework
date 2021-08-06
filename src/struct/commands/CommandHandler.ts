@@ -409,9 +409,13 @@ export class NaticoCommandHandler extends NaticoHandler {
       const options: ApplicationCommandOption[] = [];
       if (command.options) {
         command.options.forEach((option) => {
-          delete option["match"];
-          delete option["customType"];
-          options.push(option);
+          options.push({
+            name: option.name,
+            description: option.description,
+            options: option.options,
+            type: option.type,
+            required: option.required,
+          });
         });
       }
       if (command.options) slashdata["options"] = options;
