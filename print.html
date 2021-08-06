@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Intro</a></li><li class="chapter-item expanded affix "><a href="basics/basic-inhibitors.html">Inhibitors</a></li><li class="chapter-item expanded affix "><a href="basics/basic-listeners.html">Listeners</a></li><li class="chapter-item expanded affix "><a href="basics/extending.html">Extending</a></li></ol>            </div>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Intro</a></li><li class="chapter-item expanded "><a href="basics/basic-inhibitors.html"><strong aria-hidden="true">1.</strong> Basics</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basics/basic-inhibitors.html"><strong aria-hidden="true">1.1.</strong> Inhibitors</a></li><li class="chapter-item expanded "><a href="basics/basic-listeners.html"><strong aria-hidden="true">1.2.</strong> Listeners</a></li><li class="chapter-item expanded "><a href="basics/extending.html"><strong aria-hidden="true">1.3.</strong> Extending</a></li></ol></li><li class="chapter-item expanded "><a href="commands/slash.html"><strong aria-hidden="true">2.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="commands/slash.html"><strong aria-hidden="true">2.1.</strong> Slash Commands</a></li><li class="chapter-item expanded "><a href="commands/arguments.html"><strong aria-hidden="true">2.2.</strong> Arguments</a></li></ol></li></ol>            </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
@@ -246,6 +246,55 @@ export default class notTricked extends NaticoInhibitor {
 }
 </code></pre>
 <p>Resulting code can be found <a href="https://github.com/naticoo/examplebot/tree/main/basic-inhibitors">here</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="basic-inhibitor-setup-1"><a class="header" href="#basic-inhibitor-setup-1">Basic inhibitor setup</a></h1>
+<p>Inhibitors are a great way to prevent users from using certain commands or all</p>
+<p>In this tutoroial ill show how to them up</p>
+<p>this guide assumes that you are already using the intro bot</p>
+<pre><code class="language-ts">//mod.ts
+...
+//You are going to add this under the command handler
+inhibitorHandler: NaticoInhibitorHandler = new NaticoInhibitorHandler(this, {
+		directory: './inhibitors',
+	});
+...
+	async start(token: string) {
+		//Set the inhibitor handler to be used
+		this.commandHandler.setInhibitorHandler(this.inhibitorHandler);
+        //Then load the commands as usual
+		await this.commandHandler.loadALL();
+        //And the inhibitors
+		await this.inhibitorHandler.loadALL();
+		return this.login(token);
+	}
+...
+</code></pre>
+<h2 id="creating-a-inhibitor-1"><a class="header" href="#creating-a-inhibitor-1">Creating a inhibitor</a></h2>
+<pre><code class="language-ts">//inhibitors/notTricked.ts
+import { DiscordenoMessage, NaticoCommand, NaticoInhibitor } from &quot;../deps.ts&quot;;
+export default class notTricked extends NaticoInhibitor {
+  constructor() {
+    super(&quot;notTricked&quot;, {
+      //Higher priotiry = earlier fire
+      priority: 1,
+    });
+  }
+
+  exec(message: DiscordenoMessage, command: NaticoCommand): boolean {
+    //This checks if the command thats being ran has the name ping
+    if (command.name == &quot;ping&quot;) {
+      //Checks if the user their id is the one from tricked and if it isnt returns true
+      //Returning true means the command is blocked
+      if (message.authorId !== 336465356304678913n) {
+        message.reply(&quot;You are not allowed to run this command&quot;);
+        return true;
+      }
+    }
+    //Otherwise it just runs the command
+    return false;
+  }
+}
+</code></pre>
+<p>Resulting code can be found <a href="https://github.com/naticoo/examplebot/tree/main/basic-inhibitors">here</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="basic-listeners-setup"><a class="header" href="#basic-listeners-setup">Basic listeners setup</a></h1>
 <p>Listeners are a way of getting events and running code on them</p>
 <p>this guide assumes that you are already using the intro bot</p>
@@ -334,6 +383,123 @@ export default class listeners extends botCommand {
 }
 </code></pre>
 <p>You can find the resulting code <a href="https://github.com/naticoo/examplebot/tree/main/extending">here</a></p>
+<div style="break-before: page; page-break-before: always;"></div><p>This page is in construction.</p>
+<div style="break-before: page; page-break-before: always;"></div><p>This page is in construction.</p>
+<div style="break-before: page; page-break-before: always;"></div><p>Arguments are as easy as making slash commands in natico heres a quick example</p>
+<p>A good way to make slash command arguments is to use <a href="https://rauf.wtf/slash/">rauf.wtf</a></p>
+<pre><code class="language-ts">//Some command.ts
+import { NaticoCommand, DiscordenoMessage, cache, Matches, DiscordenoMember } from &quot;../../deps.ts&quot;;
+export default class bigSay extends NaticoCommand {
+  constructor() {
+    super(&quot;bigsay&quot;, {
+      name: &quot;bigsay&quot;,
+      aliases: [&quot;bigsay&quot;],
+      ownerOnly: true,
+      options: [
+        {
+          type: 3,
+          name: &quot;user&quot;,
+          description: &quot;The user you want to dm&quot;,
+          required: true,
+          match: Matches.rest,
+          customType: (message, content) =&gt; {
+            //The last item in the array will be the new rest
+            return [cache.members.get(BigInt(content.split(&quot; &quot;)[0])), content.split(&quot; &quot;).slice(1).join(&quot; &quot;)];
+          },
+        },
+        {
+          type: 3,
+          name: &quot;text&quot;,
+          description: &quot;text you want the bot to say&quot;,
+          required: true,
+          match: Matches.rest,
+          customType: (message, content) =&gt; {
+            return content.split(&quot; &quot;).reverse().join(&quot;🦀&quot;);
+          },
+        },
+      ],
+    });
+  }
+  async exec(message: DiscordenoMessage, { text, user }: { text: string; user: DiscordenoMember }) {
+    if (user) await user.sendDM(text);
+    message.reply(`dmed ${user.name} ${text}`);
+  }
+}
+</code></pre>
+<p>Even subcommands are handled the same way heres a quick example</p>
+<pre><code class="language-ts">import { NaticoClient, NaticoCommandHandler, NaticoClientOptions } from &quot;../../deps.ts&quot;;
+class BotClient extends NaticoClient {
+  ...
+  commandHandler: NaticoCommandHandler = new NaticoCommandHandler(this, {
+    subType: &quot;multiple&quot;,
+  });
+  ...
+}
+</code></pre>
+<pre><code class="language-ts">import { NaticoCommand, DiscordenoMessage } from &quot;../../../deps.ts&quot;;
+export default class say extends NaticoCommand {
+  constructor() {
+    super(&quot;say&quot;, {
+      name: &quot;say&quot;,
+      aliases: [&quot;say&quot;],
+      options: [
+        {
+          type: 1,
+          name: &quot;channel&quot;,
+          description: &quot;says the stuff in the current channel&quot;,
+          options: [
+            {
+              type: 3,
+              name: &quot;text&quot;,
+              description: &quot;stuff you want to say in the channel&quot;,
+              required: false,
+            },
+          ],
+        },
+
+        {
+          type: 1,
+          name: &quot;dm&quot;,
+          description: &quot;dms you the stuff instead&quot;,
+          options: [
+            {
+              type: 3,
+              name: &quot;text&quot;,
+              description: &quot;Things you want to dm the user&quot;,
+              required: false,
+            },
+          ],
+        },
+      ],
+    });
+  }
+  exec(message: DiscordenoMessage) {
+    //It will default to this without arguments
+    message.reply(&quot;Please chooose between &quot; + this.options!.map((option) =&gt; option.name).join(&quot;, &quot;));
+  }
+}
+</code></pre>
+<pre><code class="language-ts">import { DiscordenoMessage, NaticoSubCommand } from &quot;../../../../deps.ts&quot;;
+export default class channel extends NaticoSubCommand {
+  constructor() {
+    super(&quot;channel&quot;, {
+      name: &quot;channel&quot;,
+      subOf: &quot;say&quot;,
+      options: [
+        {
+          type: 3,
+          name: &quot;text&quot;,
+          description: &quot;stuff you want to say in the channel&quot;,
+          required: false,
+        },
+      ],
+    });
+  }
+  exec(message: DiscordenoMessage, a: { text: string }) {
+    message.channel!.send(a.text || &quot;nothing&quot;);
+  }
+}
+</code></pre>
 
                     </main>
 
