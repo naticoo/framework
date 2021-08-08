@@ -1,17 +1,9 @@
-import { NaticoModule } from "../NaticoModule.js";
-import { ComponentInteraction, DiscordenoMember } from "../../../deps.ts";
-interface NaticoButtonOptions {
+import { NaticoModule, NaticoModuleOptions } from "../NaticoModule.ts";
+import { NaticoButtonHandler } from "./ButtonHandler.ts";
+export interface NaticoButtonOptions extends NaticoModuleOptions {
   trigger: string;
 }
 export abstract class NaticoButton extends NaticoModule {
-  trigger: string;
-  constructor(id: string, { trigger }: NaticoButtonOptions) {
-    super(id);
-    this.trigger = trigger;
-  }
-  abstract exec(
-    interaction: ComponentInteraction,
-    member: DiscordenoMember,
-    params: string[]
-  ): unknown | Promise<unknown> | undefined | null | Promise<undefined>;
+  declare handler: NaticoButtonHandler;
+  trigger!: string;
 }

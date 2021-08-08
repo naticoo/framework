@@ -5,3 +5,4 @@ export * from "./Constants.ts";
 export * from "./createNaticoInteraction.ts";
 export * from "./MessageCollector.ts";
 export * from "./Components.ts";
+export * from "./applyOptions.ts";
