@@ -31,13 +31,7 @@ export class NaticoListenerHandler extends NaticoHandler {
 
     const emitter = this.emitters.get(listener.emitter);
     if (emitter == this.client) this.client.addEvent(listener.event);
-    emitter.on(listener.event, async (...args: any[]) => {
-      try {
-        await listener.exec(...args);
-      } catch (e) {
-        this.emit(ListenerHandlerEvents.LISTENERERROR, e, listener);
-      }
-    });
+    emitter.on(listener.event, listener.exec);
     return listener;
   }
   setEmitters(emitters: any) {
