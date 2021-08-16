@@ -12,4 +12,4 @@ export abstract class NaticoTask extends NaticoModule {
   delay?: number | delayFN;
   runOnStart?: boolean;
 }
-export type delayFN = (client: NaticoClient) => number;
+export type delayFN = <T extends NaticoClient>(client: T) => number;
