@@ -14,11 +14,7 @@ import {
   event: "commandStarted",
 })
 export default class commandStarted extends NaticoListener {
-  exec(
-    message: DiscordenoMessage,
-    command: NaticoCommand,
-    args: ConvertedOptions,
-  ) {
+  exec(message: DiscordenoMessage, command: NaticoCommand, args: ConvertedOptions) {
     console.log("command:", command.id, "started with args", args);
   }
 }

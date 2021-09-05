@@ -1,12 +1,8 @@
-import {
-  applyOptions,
-  NaticoListener,
-  NaticoListenerOptions,
-} from "../../deps.ts";
+import { applyOptions, NaticoListener, NaticoListenerOptions } from "../../deps.ts";
 
 //@deno-fmt-ignore
 @applyOptions<NaticoListenerOptions>({
-  id:"ready",
+  id: "ready",
   emitter: "client",
   event: "ready",
 })
