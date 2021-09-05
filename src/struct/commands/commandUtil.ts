@@ -2,6 +2,9 @@
 import { NaticoCommandHandler } from "./CommandHandler.ts";
 import { Collection, DiscordenoMessage, CreateMessage, SlashCommandInteraction } from "../../../deps.ts";
 
+/**
+ * The command util from natico which allows responding to interactions and much more
+ */
 export class NaticoCommandUtil {
   handler: NaticoCommandHandler;
   message: DiscordenoMessage;
@@ -19,7 +22,7 @@ export class NaticoCommandUtil {
   } = {
     defered: false,
   };
-
+  // The message responses
   messages: Collection<any, any> = new Collection();
   constructor(handler: NaticoCommandHandler, message: DiscordenoMessage) {
     this.handler = handler;
@@ -34,7 +37,9 @@ export class NaticoCommandUtil {
       this.messages.clear();
     }
   }
-
+  /**
+   * Set the last response
+   */
   setLastResponse(message: DiscordenoMessage) {
     if (Array.isArray(message)) {
       this.lastResponse = message.slice(-1)[0];

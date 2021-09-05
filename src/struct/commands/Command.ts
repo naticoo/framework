@@ -20,7 +20,22 @@ export interface NaticoCommandOptions {
   cooldown?: number;
   id: string;
 }
-
+/**
+ * Create a natico command
+ *
+ * @example
+ *```typescript
+ * @applyOptions<NaticoCommandOptions>({
+ *  name: "ping",
+ *  description: "A simple ping command"
+ * })
+ * export default class Ping extends NaticoCommand {
+ *  exec(message:DiscordenoMessage){
+ *    return message.util.send({ content: "Hello from natico!" })
+ *  }
+ * }
+ *```
+ */
 export abstract class NaticoCommand extends NaticoModule {
   declare handler: NaticoCommandHandler;
   category = "default";
