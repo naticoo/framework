@@ -1,10 +1,4 @@
-import {
-  applyOptions,
-  DiscordenoMessage,
-  NaticoCommand,
-  NaticoInhibitor,
-  NaticoInhibitorOptions,
-} from "../../deps.ts";
+import { applyOptions, DiscordenoMessage, NaticoCommand, NaticoInhibitor, NaticoInhibitorOptions } from "../../deps.ts";
 
 //@deno-fmt-ignore
 @applyOptions<NaticoInhibitorOptions>({

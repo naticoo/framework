@@ -1,9 +1,4 @@
-import {
-  applyOptions,
-  DiscordenoMessage,
-  NaticoSubCommand,
-  NaticoSubCommandOptions,
-} from "../../../deps.ts";
+import { applyOptions, DiscordenoMessage, NaticoSubCommand, NaticoSubCommandOptions } from "../../../deps.ts";
 
 //@deno-fmt-ignore
 @applyOptions<NaticoSubCommandOptions>({
