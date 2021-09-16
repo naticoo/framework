@@ -120,19 +120,17 @@ export class NaticoCommandHandler extends NaticoHandler {
   }
   start() {
     if (this.handleEdits) {
-      this.client.addEvent("messageUpdate");
       this.client.on("messageUpdate", (message: DiscordenoMessage) => {
         return this.handleCommand(message);
       });
     }
     if (this.handleSlashCommands) {
-      this.client.addEvent("interactionCreate");
       this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
         if (data.type === DiscordInteractionTypes.ApplicationCommand)
           return this.handleSlashCommand(await createNaticoInteraction(data, this));
       });
     }
-    this.client.addEvent("messageCreate");
+
     this.client.on("messageCreate", (message: DiscordenoMessage) => {
       return this.handleCommand(message);
     });

@@ -17,7 +17,6 @@ export class NaticoButtonHandler extends NaticoHandler {
     this.start();
   }
   start() {
-    this.client.addEvent("interactionCreate");
     this.client.on("interactionCreate", async (data: ComponentInteraction, member: DiscordenoMember) => {
       if (data.type === DiscordInteractionTypes.MessageComponent) {
         const iDontKnowAnameForThis = data.data?.customId.split("-");

@@ -1,4 +1,4 @@
-import { BotConfig, botId, EventEmitter, startBot } from "../../deps.ts";
+import { BotConfig, botId, EventEmitter, startBot, GenericFunction, WrappedFunction } from "../../deps.ts";
 import { Events } from "../util/Interfaces.ts";
 import { NaticoClientUtil } from "../util/ClientUtil.ts";
 export abstract class NaticoClient extends EventEmitter {
@@ -16,13 +16,17 @@ export abstract class NaticoClient extends EventEmitter {
   get id() {
     return botId;
   }
-
+  on(eventName: string | symbol, listener: GenericFunction | WrappedFunction) {
+    this.addEvent(eventName.toString());
+    return super.on(eventName, listener);
+  }
   /**
    * @param event Add a event to be emitted
    */
   addEvent(event: string) {
     this.events[event] = (...args: unknown[]) => this.emit(event, ...args);
   }
+
   /**
    * Start the natico bot
    */
