@@ -412,6 +412,7 @@ export class NaticoCommandHandler extends NaticoHandler {
           options.push({
             name: option.name,
             description: option.description,
+            choices: option.choices,
             options: option.options,
             type: option.type,
             required: option.required,
