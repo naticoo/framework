@@ -1,13 +1,13 @@
 import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoCommand } from "../commands/Command.ts";
-import { NaticoHandler } from "../NaticoHandler.js";
+import { NaticoHandler } from "../NaticoHandler.ts";
 import { NaticoInhibitor } from "./Inhibitor.ts";
 import { Collection, DiscordenoMessage } from "../../../deps.ts";
-export class NaticoInhibitorHandler extends NaticoHandler {
+export class NaticoInhibitorHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoInhibitor>;
   directory: string;
 
-  constructor(client: NaticoClient, { directory }: { directory: string }) {
+  constructor(client: T, { directory }: { directory: string }) {
     super(client, {
       directory,
     });

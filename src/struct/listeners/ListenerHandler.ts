@@ -1,14 +1,14 @@
 import { NaticoClient } from "../NaticoClient.ts";
-import { NaticoHandler } from "../NaticoHandler.js";
+import { NaticoHandler } from "../NaticoHandler.ts";
 import { NaticoListener } from "./Listener.ts";
 import { Collection } from "../../../deps.ts";
 import { ListenerHandlerEvents } from "../../util/Constants.ts";
-export class NaticoListenerHandler extends NaticoHandler {
+export class NaticoListenerHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoListener>;
   emitters: Collection<string, any>;
   directory: string;
 
-  constructor(client: NaticoClient, { directory }: { directory: string }) {
+  constructor(client: T, { directory }: { directory: string }) {
     super(client, {
       directory,
     });

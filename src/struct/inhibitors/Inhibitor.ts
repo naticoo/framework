@@ -1,3 +1,4 @@
+import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoModule, NaticoModuleOptions } from "../NaticoModule.ts";
 import { NaticoInhibitorHandler } from "./InhibitorHandler.ts";
 
@@ -6,6 +7,6 @@ export interface NaticoInhibitorOptions extends NaticoModuleOptions {
 }
 
 export abstract class NaticoInhibitor extends NaticoModule {
-  declare handler: NaticoInhibitorHandler;
+  declare handler: NaticoInhibitorHandler<NaticoClient>;
   priority!: number;
 }

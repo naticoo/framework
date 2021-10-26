@@ -1,14 +1,14 @@
 import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoButton } from "./Button.ts";
-import { NaticoHandler } from "../NaticoHandler.js";
+import { NaticoHandler } from "../NaticoHandler.ts";
 // import { NaticoInhibitor } from "./Inhibitor.ts";
 import { Collection, DiscordInteractionTypes, ComponentInteraction, DiscordenoMember } from "../../../deps.ts";
 
-export class NaticoButtonHandler extends NaticoHandler {
+export class NaticoButtonHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoButton>;
   directory: string;
 
-  constructor(client: NaticoClient, { directory }: { directory: string }) {
+  constructor(client: T, { directory }: { directory: string }) {
     super(client, {
       directory,
     });

@@ -2,24 +2,22 @@ import {
   ApplicationCommandOption,
   Collection,
   DiscordApplicationCommandOptionTypes,
-  DiscordenoMessage,
   EditGlobalApplicationCommand,
   upsertSlashCommands,
-  botId,
   getMissingChannelPermissions,
   DiscordInteractionTypes,
   SlashCommandInteraction,
 } from "../../../deps.ts";
-import { NaticoCommandUtil } from "./commandUtil.ts";
+// import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator, Arguments } from "./ArgumentGenerator.ts";
 import { NaticoInhibitorHandler } from "../inhibitors/InhibitorHandler.ts";
 import { NaticoCommand } from "./Command.ts";
 import { NaticoSubCommand } from "./SubCommand.ts";
-import { NaticoHandler } from "../NaticoHandler.js";
+import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
-import { createNaticoInteraction } from "../../util/createNaticoInteraction.ts";
+import { NaticoInteraction } from "../../util/createNaticoInteraction.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
@@ -47,7 +45,7 @@ export interface NaticoCommandHandlerOptions {
   handleArgs?: boolean;
   // handleSlashes?: boolean;
 }
-export class NaticoCommandHandler extends NaticoHandler {
+export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoCommand | NaticoSubCommand>;
   commandUtils: Collection<BigInt, NaticoCommandUtil>;
   IgnoreCD: bigint[];
@@ -58,7 +56,7 @@ export class NaticoCommandHandler extends NaticoHandler {
   prefix: prefixFn | string | string[];
   handleEdits: boolean;
   handleArgs: boolean;
-  inhibitorHandler!: NaticoInhibitorHandler;
+  inhibitorHandler!: NaticoInhibitorHandler<NaticoClient>;
   generator: ArgumentGenerator;
   commandUtil: boolean;
   storeMessages: boolean;
@@ -73,7 +71,7 @@ export class NaticoCommandHandler extends NaticoHandler {
   subType: "single" | "multiple";
   // handleSlashes: boolean;
   constructor(
-    client: NaticoClient,
+    client: T,
     {
       directory = "./commands",
       prefix = "!",
@@ -119,20 +117,18 @@ export class NaticoCommandHandler extends NaticoHandler {
     this.cooldowns = new Collection();
   }
   start() {
-    if (this.handleEdits) {
-      this.client.on("messageUpdate", (message: DiscordenoMessage) => {
-        return this.handleCommand(message);
+    // this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
+    //   if (data.type === DiscordInteractionTypes.ApplicationCommand)
+    //     return this.handleSlashCommand(await createNaticoInteraction(data, this));
+    // });
+    this.client.on("RAW_INTERACTION", (raw, shard) => {
+      let interaction = new NaticoInteraction(raw.d, this.client);
+      delete interaction.bot;
+      console.log({
+        raw,
+        interaction,
+        shard,
       });
-    }
-    if (this.handleSlashCommands) {
-      this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
-        if (data.type === DiscordInteractionTypes.ApplicationCommand)
-          return this.handleSlashCommand(await createNaticoInteraction(data, this));
-      });
-    }
-
-    this.client.on("messageCreate", (message: DiscordenoMessage) => {
-      return this.handleCommand(message);
     });
   }
 
@@ -222,6 +218,7 @@ export class NaticoCommandHandler extends NaticoHandler {
 
       if (command.userPermissions) {
         const missingPermissions = await getMissingChannelPermissions(
+          this.client,
           message!.channelId,
           message.authorId,
           command.userPermissions
@@ -233,8 +230,9 @@ export class NaticoCommandHandler extends NaticoHandler {
       }
       if (command.clientPermissions) {
         const missingPermissions = await getMissingChannelPermissions(
+          this.client,
           message!.channelId,
-          botId,
+          this.client.id,
           command.clientPermissions
         );
         if (missingPermissions[0]) {
@@ -337,7 +335,7 @@ export class NaticoCommandHandler extends NaticoHandler {
 
     if (Array.isArray(prefixes)) parsedPrefixes.push(...prefixes);
     else parsedPrefixes.push(prefixes);
-    if (this.mentionPrefix) parsedPrefixes.push(`<@!${botId}>`, `<@${botId}>`);
+    if (this.mentionPrefix) parsedPrefixes.push(`<@!${this.client.id}>`, `<@${this.client.id}>`);
 
     for (const prefix of parsedPrefixes) {
       if (await this.prefixCheck(prefix, message)) return;
@@ -393,10 +391,10 @@ export class NaticoCommandHandler extends NaticoHandler {
    */
   async enableSlash(guildID?: bigint) {
     const slashed = this.slashed();
-    await upsertSlashCommands(slashed, guildID);
+    await upsertSlashCommands(this.client, slashed, guildID);
     return slashed;
   }
-  slashed() {
+  slashed(): any {
     const commands: EditGlobalApplicationCommand[] = [];
     const data = this.modules.filter((command) => command.slash || false);
     data.forEach((command: NaticoCommand) => {

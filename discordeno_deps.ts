@@ -1,1 +1,1 @@
-export * from "https://deno.land/x/discordeno@12.0.1/mod.ts";
+export * from "https://raw.githubusercontent.com/discordeno/discordeno/fp-attempt-9001/mod.ts";

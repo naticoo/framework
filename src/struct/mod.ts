@@ -1,5 +1,5 @@
 export * from "./NaticoClient.ts";
-export * from "./NaticoHandler.js";
+export * from "./NaticoHandler.ts";
 export * from "./NaticoModule.ts";
 
 export * from "./commands/Command.ts";

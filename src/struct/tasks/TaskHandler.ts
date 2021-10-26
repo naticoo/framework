@@ -1,13 +1,13 @@
 import { NaticoClient } from "../NaticoClient.ts";
-import { NaticoHandler } from "../NaticoHandler.js";
+import { NaticoHandler } from "../NaticoHandler.ts";
 import { NaticoTask } from "./Task.ts";
 import { Collection } from "../../../deps.ts";
 import { TaskHandlerEvents } from "../../util/Constants.ts";
-export class NaticoTaskHandler extends NaticoHandler {
+export class NaticoTaskHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoTask>;
   directory: string;
 
-  constructor(client: NaticoClient, { directory }: { directory: string }) {
+  constructor(client: T, { directory }: { directory: string }) {
     super(client, {
       directory,
     });

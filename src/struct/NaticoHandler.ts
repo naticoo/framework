@@ -1,16 +1,18 @@
+// deno-lint-ignore-file
 import { EventEmitter } from "../../deps.ts";
+import { NaticoClient } from "./NaticoClient.ts";
 
-export class NaticoHandler extends EventEmitter {
-  client;
-  directory;
-  modules;
-  constructor(client, { directory }) {
+export class NaticoHandler<T extends NaticoClient> extends EventEmitter {
+  client: T;
+  directory: any;
+  modules: any;
+  constructor(client: any, { directory }: any) {
     super();
     this.client = client;
     this.directory = directory;
   }
 
-  async load(thing) {
+  async load(thing: any) {
     let mod = await import("file://" + thing);
     mod = new mod.default();
 
@@ -18,13 +20,13 @@ export class NaticoHandler extends EventEmitter {
 
     return mod;
   }
-  remove(id) {
+  remove(id: any) {
     const mod = this.modules.get(id.toString());
     if (!mod) return;
     this.deregister(mod);
     return mod;
   }
-  async reload(id) {
+  async reload(id: any) {
     const mod = this.modules.get(id);
     if (!mod) return;
     this.deregister(mod);
@@ -33,17 +35,17 @@ export class NaticoHandler extends EventEmitter {
     const newMod = await this.load(filepath);
     return newMod;
   }
-  deregister(mod) {
+  deregister(mod: any) {
     this.modules.delete(mod.id);
   }
   async reloadAll() {
-    for (const m of Array.from(this.modules.values())) {
+    for (const m of Array.from(this.modules.values()) as any[]) {
       if (m.filepath) await this.reload(m.id);
     }
 
     return this.modules;
   }
-  async loadALL(dirPath) {
+  async loadALL(dirPath: any) {
     dirPath = await Deno.realPath(dirPath || this.directory);
     const entries = Deno.readDir(dirPath);
     for await (const entry of entries) {
@@ -55,7 +57,7 @@ export class NaticoHandler extends EventEmitter {
       await this.loadALL(`${dirPath}/${entry.name}`);
     }
   }
-  register(mod, filepath) {
+  register(mod: any, filepath: any) {
     mod.filepath = filepath;
     mod.handler = this;
     mod.client = this.client;
