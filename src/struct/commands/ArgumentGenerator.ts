@@ -99,7 +99,7 @@ export class ArgumentGenerator {
 
     for await (const arg of command.options as ArgOptions[]) {
       if (argKeys[index] !== arg.name && arg.required && arg.prompt) {
-        const prompt = await message.reply(`${arg.prompt}\nThe command be automatically cancelled in 30 seconds.`);
+        const prompt = await message.reply(`${arg.prompt}\nThe command will be automatically cancelled in 30 seconds.`);
 
         const collector = new MessageCollector(this.client, message, undefined, { time: 30 * 1000 });
         const msg = (await collector.collect).first();
