@@ -417,7 +417,7 @@ export class NaticoCommandHandler extends NaticoHandler {
             channel_types: option.channel_types,
             min_value: option.min_value,
             max_value: option.max_value,
-            autocomplete: option.autocomplete
+            autocomplete: option.autocomplete,
           });
         });
       }
