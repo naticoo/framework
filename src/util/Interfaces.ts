@@ -18,6 +18,14 @@ export interface ArgOptions extends ApplicationCommandOption {
   customType?: customType;
   //The prompt that will be given when a user doesnt provide that argument
   prompt?: string;
+  //If the option is a channel type, the channels shown will be restricted to these types
+  channel_types?: string[]
+  //If the option is an INTEGER or NUMBER type, the minimum value permitted
+  min_value?: number
+  //If the options is an INTEGER or NUMBER type, the maximum value permitted
+  max_value?: number
+  //Enable autocomplete interactions for this option
+  autocomplete?: boolean
 }
 export type customType = (message: NaticoMessage | DiscordenoMessage | any, content: string) => any | Promise<any>;
 
