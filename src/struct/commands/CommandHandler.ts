@@ -8,6 +8,7 @@ import {
   getMissingChannelPermissions,
   DiscordInteractionTypes,
   SlashCommandInteraction,
+  MakeRequired
 } from "../../../deps.ts";
 import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
@@ -19,7 +20,6 @@ import { NaticoHandler } from "../NaticoHandler.js";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
 import { createNaticoInteraction } from "../../util/createNaticoInteraction.ts";
-import { MakeRequired } from "https://raw.githubusercontent.com/discordeno/discordeno/5bf63ae183f0364d50ec0eed445ef43ff7be21b7/src/types/util.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
