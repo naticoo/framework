@@ -1,5 +1,4 @@
 import {
-  ApplicationCommandOption,
   Collection,
   DiscordApplicationCommandOptionTypes,
   DiscordenoMessage,
@@ -9,6 +8,7 @@ import {
   getMissingChannelPermissions,
   DiscordInteractionTypes,
   SlashCommandInteraction,
+  MakeRequired
 } from "../../../deps.ts";
 import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
@@ -397,14 +397,14 @@ export class NaticoCommandHandler extends NaticoHandler {
     return slashed;
   }
   slashed() {
-    const commands: EditGlobalApplicationCommand[] = [];
+    const commands: MakeRequired<EditGlobalApplicationCommand, "name">[] = [];
     const data = this.modules.filter((command) => command.slash || false);
     data.forEach((command: NaticoCommand) => {
-      const slashdata: EditGlobalApplicationCommand = {
+      const slashdata: MakeRequired<EditGlobalApplicationCommand, "name"> = {
         name: command.name || command.id,
         description: command.description || "no description",
       };
-      const options: ApplicationCommandOption[] = [];
+      const options: ArgOptions[] = [];
       if (command.options) {
         command.options.forEach((option) => {
           options.push({
