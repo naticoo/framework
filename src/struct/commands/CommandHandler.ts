@@ -1,5 +1,4 @@
 import {
-  ApplicationCommandOption,
   Collection,
   DiscordApplicationCommandOptionTypes,
   DiscordenoMessage,
@@ -404,7 +403,7 @@ export class NaticoCommandHandler extends NaticoHandler {
         name: command.name || command.id,
         description: command.description || "no description",
       };
-      const options: ApplicationCommandOption[] = [];
+      const options: ArgOptions[] = [];
       if (command.options) {
         command.options.forEach((option) => {
           options.push({
