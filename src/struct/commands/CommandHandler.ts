@@ -19,6 +19,7 @@ import { NaticoHandler } from "../NaticoHandler.js";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
 import { createNaticoInteraction } from "../../util/createNaticoInteraction.ts";
+import { MakeRequired } from "https://raw.githubusercontent.com/discordeno/discordeno/5bf63ae183f0364d50ec0eed445ef43ff7be21b7/src/types/util.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
@@ -396,10 +397,10 @@ export class NaticoCommandHandler extends NaticoHandler {
     return slashed;
   }
   slashed() {
-    const commands: EditGlobalApplicationCommand[] = [];
+    const commands: MakeRequired<EditGlobalApplicationCommand, "name">[] = [];
     const data = this.modules.filter((command) => command.slash || false);
     data.forEach((command: NaticoCommand) => {
-      const slashdata: EditGlobalApplicationCommand = {
+      const slashdata: MakeRequired<EditGlobalApplicationCommand, "name"> = {
         name: command.name || command.id,
         description: command.description || "no description",
       };
