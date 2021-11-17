@@ -45,7 +45,7 @@ export class NaticoHandler<T extends NaticoClient> extends EventEmitter {
 
     return this.modules;
   }
-  async loadALL(dirPath: any) {
+  async loadALL(dirPath?: any) {
     dirPath = await Deno.realPath(dirPath || this.directory);
     const entries = Deno.readDir(dirPath);
     for await (const entry of entries) {

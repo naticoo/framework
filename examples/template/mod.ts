@@ -1,5 +1,4 @@
 import {
-  cache,
   DiscordenoMember,
   NaticoClient,
   NaticoClientOptions,
@@ -12,24 +11,21 @@ class BotClient extends NaticoClient {
   constructor(options: NaticoClientOptions) {
     super(options);
   }
-  cache = cache;
-  get user() {
-    return this.cache.members.get(this.id) as DiscordenoMember;
-  }
-  commandHandler: NaticoCommandHandler = new NaticoCommandHandler(this, {
+
+  commandHandler = new NaticoCommandHandler(this, {
     directory: "./commands",
     prefix: "!",
     owners: [336465356304678913n],
     guildonly: false,
     subType: "single",
   });
-  listenerHandler: NaticoListenerHandler = new NaticoListenerHandler(this, {
+  listenerHandler = new NaticoListenerHandler(this, {
     directory: "./listeners",
   });
-  inhibitorHandler: NaticoInhibitorHandler = new NaticoInhibitorHandler(this, {
+  inhibitorHandler = new NaticoInhibitorHandler(this, {
     directory: "./inhibitors",
   });
-  taskHandler: NaticoTaskHandler = new NaticoTaskHandler(this, {
+  taskHandler = new NaticoTaskHandler(this, {
     directory: "./tasks",
   });
   async start() {
@@ -48,6 +44,8 @@ const botClient = new BotClient({
   intents: ["Guilds", "GuildMessages", "GuildVoiceStates"],
   //Replace this with your token
   token: Deno.env.get("TOKEN")!,
+  cache: { isAsync: false },
+  applicationId: 826480286169956413n,
 });
 //DO NOT AWAIT THIS IT WILL CAUSE ISSUES
 botClient.start();

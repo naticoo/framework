@@ -4,9 +4,8 @@ import {
   DiscordApplicationCommandOptionTypes,
   EditGlobalApplicationCommand,
   upsertSlashCommands,
-  getMissingChannelPermissions,
   DiscordInteractionTypes,
-  SlashCommandInteraction,
+  DiscordenoInteraction,
 } from "../../../deps.ts";
 // import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
@@ -17,7 +16,6 @@ import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
-import { NaticoInteraction } from "../../util/createNaticoInteraction.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
@@ -47,7 +45,6 @@ export interface NaticoCommandHandlerOptions {
 }
 export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoCommand | NaticoSubCommand>;
-  commandUtils: Collection<BigInt, NaticoCommandUtil>;
   IgnoreCD: bigint[];
   owners: bigint[];
   cooldown: number;
@@ -117,18 +114,8 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
     this.cooldowns = new Collection();
   }
   start() {
-    // this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
-    //   if (data.type === DiscordInteractionTypes.ApplicationCommand)
-    //     return this.handleSlashCommand(await createNaticoInteraction(data, this));
-    // });
-    this.client.on("RAW_INTERACTION", (raw, shard) => {
-      let interaction = new NaticoInteraction(raw.d, this.client);
-      delete interaction.bot;
-      console.log({
-        raw,
-        interaction,
-        shard,
-      });
+    this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
+      if (data.type === DiscordInteractionTypes.ApplicationCommand) return this.handleSlashCommand(data);
     });
   }
 
@@ -420,22 +407,22 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
     });
     return commands;
   }
-  async handleSlashCommand(interaction: any) {
+  async handleSlashCommand(interaction: DiscordenoInteraction) {
     const args: ConvertedOptions = {};
-    if (interaction.util.data.interaction?.data?.options)
-      for (const option of interaction.util.data.interaction.data?.options) {
+    if (interaction?.data?.options)
+      for (const option of interaction.data?.options) {
         if (option?.value) {
           args[option.name] = option.value;
         }
       }
-    const command = this.findCommand(interaction.util.data.interaction.data.name);
+    const command = this.findCommand(interaction?.data?.name);
     if (!command) return;
     let sub: string | null = null;
     if (command?.options) {
       if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
-        sub = interaction.util.data.interaction.data?.options[0].name;
-        if (interaction.util.data.interaction?.data?.options[0]?.options)
-          for (const option of interaction.util.data.interaction.data?.options[0]?.options) {
+        sub = interaction?.data?.options?.[0]?.name!;
+        if (interaction?.data?.options?.[0]?.options)
+          for (const option of interaction.data?.options[0]?.options) {
             if (option?.value) {
               args[option.name] = option.value;
             }

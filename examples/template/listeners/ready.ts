@@ -7,8 +7,9 @@ import { applyOptions, NaticoListener, NaticoListenerOptions } from "../../deps.
   event: "ready",
 })
 export default class ready extends NaticoListener {
-  exec() {
-    //@ts-ignore - extend the class to make types work for this
-    console.log(`Bot has started with id ${this.client.id}`);
+  async exec() {
+    console.log(`Bot has started with id ${this.client.applicationId}`);
+    //@ts-ignore -
+    await this.client.commandHandler.enableSlash();
   }
 }
