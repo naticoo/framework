@@ -1,5 +1,5 @@
 // Source: 2021 Discordeno - https://github.com/discordeno/template/blob/48165243c6053fb9568c8df4fc25fd1273a92c11/src/utils/Components.ts
-import { ActionRow, ButtonStyles, DiscordMessageComponentTypes } from "../../deps.ts";
+import { ActionRow, ButtonStyles } from "../../deps.ts";
 
 const snowflakeRegex = /[0-9]{17,19}/;
 //Prefixes with Natico to not cause type errors

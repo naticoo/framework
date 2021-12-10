@@ -2,7 +2,7 @@ import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoButton } from "./Button.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 // import { NaticoInhibitor } from "./Inhibitor.ts";
-import { Collection, DiscordInteractionTypes, ComponentInteraction, DiscordenoMember } from "../../../deps.ts";
+import { Collection, DiscordenoMember } from "../../../deps.ts";
 
 export class NaticoButtonHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoButton>;

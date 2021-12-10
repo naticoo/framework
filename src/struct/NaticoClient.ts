@@ -17,11 +17,11 @@ import {
   CreateBotOptions,
   createEventHandlers,
   createBotGatewayHandlers,
-  DiscordGatewayIntents,
-  createCache,
+  // createCache,
 } from "../../deps.ts";
 import { Events } from "../util/Interfaces.ts";
 import { NaticoClientUtil } from "../util/ClientUtil.ts";
+import { DiscordGatewayIntents } from "https://deno.land/x/discordeno@13.0.0-rc1/mod.ts";
 export interface NaticoClientOptions extends Omit<CreateBotOptions, "events"> {
   util: boolean;
 }
@@ -47,7 +47,7 @@ export abstract class NaticoClient extends EventEmitter implements Bot {
     this.handleDiscordPayload = config.handleDiscordPayload;
 
     // @ts-ignore itoh cache types plz
-    this.cache = createCache(this as Bot, config.cache);
+    // this.cache = createCache(this as Bot, config.cache);
 
     if (config?.util) this.util = new NaticoClientUtil(this);
   }

@@ -9,9 +9,9 @@ import {
 
 //@deno-fmt-ignore
 @applyOptions<NaticoCommandOptions>({
-  id: "ping",
-  name: "ping",
-  aliases: ["ping"],
+  id: "stats",
+  name: "stats",
+  aliases: ["stats", "stats"],
 })
 export default class ping extends NaticoCommand {
   async exec(message: DiscordenoInteraction) {

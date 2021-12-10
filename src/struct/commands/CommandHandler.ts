@@ -1,10 +1,7 @@
 import {
   ApplicationCommandOption,
   Collection,
-  DiscordApplicationCommandOptionTypes,
   EditGlobalApplicationCommand,
-  upsertSlashCommands,
-  DiscordInteractionTypes,
   DiscordenoInteraction,
 } from "../../../deps.ts";
 // import { NaticoCommandUtil } from "./commandUtil.ts";
@@ -16,6 +13,7 @@ import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
+import { DiscordInteractionTypes } from "https://deno.land/x/discordeno@13.0.0-rc1/src/types/mod.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
@@ -115,7 +113,7 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
   }
   start() {
     this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
-      if (data.type === DiscordInteractionTypes.ApplicationCommand) return this.handleSlashCommand(data);
+      if (data.type === DiscordInteractionTypes.ApplicationCommand) return await this.handleSlashCommand(data);
     });
   }
 
