@@ -6,6 +6,7 @@ export class NaticoClientUtil {
   constructor(client: NaticoClient) {
     this.client = client;
   }
+
   /**
    * @returns a sneaky embed
    */

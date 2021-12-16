@@ -1,14 +1,14 @@
 import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoButton } from "./Button.ts";
-import { NaticoHandler } from "../NaticoHandler.js";
+import { NaticoHandler } from "../NaticoHandler.ts";
 // import { NaticoInhibitor } from "./Inhibitor.ts";
-import { Collection, DiscordInteractionTypes, ComponentInteraction, DiscordenoMember } from "../../../deps.ts";
+import { Collection, DiscordenoMember, InteractionTypes } from "../../../deps.ts";
 
-export class NaticoButtonHandler extends NaticoHandler {
+export class NaticoButtonHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoButton>;
   directory: string;
 
-  constructor(client: NaticoClient, { directory }: { directory: string }) {
+  constructor(client: T, { directory }: { directory: string }) {
     super(client, {
       directory,
     });
@@ -18,7 +18,7 @@ export class NaticoButtonHandler extends NaticoHandler {
   }
   start() {
     this.client.on("interactionCreate", async (data: ComponentInteraction, member: DiscordenoMember) => {
-      if (data.type === DiscordInteractionTypes.MessageComponent) {
+      if (data.type === InteractionTypes.MessageComponent) {
         const iDontKnowAnameForThis = data.data?.customId.split("-");
         if (!iDontKnowAnameForThis) return;
         const button = this.findButton(iDontKnowAnameForThis.shift());

@@ -2,6 +2,7 @@ import { PermissionStrings } from "../../../deps.ts";
 import { NaticoModule } from "../NaticoModule.ts";
 import { NaticoCommandHandler } from "./CommandHandler.ts";
 import { ArgOptions } from "../../util/Interfaces.ts";
+import { NaticoClient } from "../NaticoClient.ts";
 
 export interface NaticoCommandOptions {
   options?: ArgOptions[];
@@ -37,7 +38,7 @@ export interface NaticoCommandOptions {
  *```
  */
 export abstract class NaticoCommand extends NaticoModule {
-  declare handler: NaticoCommandHandler;
+  declare handler: NaticoCommandHandler<NaticoClient>;
   category = "default";
   name: string = this.id;
   aliases: string[] | undefined = [this.name];

@@ -1,13 +1,25 @@
-import { applyOptions, DiscordenoMessage, NaticoCommand, NaticoCommandOptions } from "../../deps.ts";
+import {
+  applyOptions,
+  DiscordenoInteraction,
+  NaticoCommand,
+  NaticoCommandOptions,
+  sendInteractionResponse,
+  InteractionApplicationCommandCallbackData,
+} from "../../deps.ts";
 
 //@deno-fmt-ignore
 @applyOptions<NaticoCommandOptions>({
-  id: "ping",
-  name: "ping",
-  aliases: ["ping"],
+  id: "stats",
+  name: "stats",
+  aliases: ["stats", "stats"],
 })
 export default class ping extends NaticoCommand {
-  exec(message: DiscordenoMessage) {
-    message.reply("Pong");
+  async exec(message: DiscordenoInteraction) {
+    await this.client.helpers.sendInteractionResponse(message.id, message.token, {
+      type: 4,
+      data: {
+        content: "My response",
+      },
+    });
   }
 }
