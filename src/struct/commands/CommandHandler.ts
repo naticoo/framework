@@ -1,8 +1,4 @@
-import {
-  Collection,
-  EditGlobalApplicationCommand,
-  DiscordenoInteraction,
-} from "../../../deps.ts";
+import { Collection, EditGlobalApplicationCommand, DiscordenoInteraction } from "../../../deps.ts";
 // import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator, Arguments } from "./ArgumentGenerator.ts";
