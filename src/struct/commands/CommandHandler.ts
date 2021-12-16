@@ -1,5 +1,4 @@
 import {
-  ApplicationCommandOption,
   Collection,
   EditGlobalApplicationCommand,
   DiscordenoInteraction,
@@ -383,11 +382,11 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
     const commands: EditGlobalApplicationCommand[] = [];
     const data = this.modules.filter((command) => command.slash || false);
     data.forEach((command: NaticoCommand) => {
-      const slashdata: EditGlobalApplicationCommand = {
+      const slashdata: MakeRequired<EditGlobalApplicationCommand, "name"> = {
         name: command.name || command.id,
         description: command.description || "no description",
       };
-      const options: ApplicationCommandOption[] = [];
+      const options: ArgOptions[] = [];
       if (command.options) {
         command.options.forEach((option) => {
           options.push({
@@ -397,6 +396,10 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
             options: option.options,
             type: option.type,
             required: option.required,
+            channel_types: option.channel_types,
+            min_value: option.min_value,
+            max_value: option.max_value,
+            autocomplete: option.autocomplete,
           });
         });
       }
