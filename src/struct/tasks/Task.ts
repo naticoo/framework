@@ -7,8 +7,8 @@ export interface NaticoTaskOptions extends NaticoModuleOptions {
   runOnStart?: boolean;
 }
 
-export abstract class NaticoTask extends NaticoModule {
-  declare handler: NaticoTaskHandler;
+export abstract class NaticoTask<T extends NaticoClient> extends NaticoModule {
+  declare handler: NaticoTaskHandler<T>;
   delay?: number | delayFN;
   runOnStart?: boolean;
 }

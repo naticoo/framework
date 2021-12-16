@@ -38,6 +38,7 @@ export abstract class NaticoClient extends EventEmitter implements Bot {
     this.applicationId = config.applicationId || config.botId;
     this.token = `Bot ${config.token}`;
     this.events = createEventHandlers({});
+    //@ts-ignore -
     this.intents = config.intents.reduce((bits, next) => (bits |= DiscordGatewayIntents[next]), 0);
     this.botGatewayData = config.botGatewayData;
     this.activeGuildIds = new Set<bigint>();
@@ -50,6 +51,11 @@ export abstract class NaticoClient extends EventEmitter implements Bot {
     // this.cache = createCache(this as Bot, config.cache);
 
     if (config?.util) this.util = new NaticoClientUtil(this);
+  }
+
+  plugin(plugin: any) {
+    plugin(this);
+    return this;
   }
 
   on(eventName: string | symbol, listener: GenericFunction | WrappedFunction) {

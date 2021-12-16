@@ -2,7 +2,7 @@ import { NaticoClient } from "../NaticoClient.ts";
 import { NaticoButton } from "./Button.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 // import { NaticoInhibitor } from "./Inhibitor.ts";
-import { Collection, DiscordenoMember } from "../../../deps.ts";
+import { Collection, DiscordenoMember, InteractionTypes } from "../../../deps.ts";
 
 export class NaticoButtonHandler<T extends NaticoClient> extends NaticoHandler<T> {
   declare modules: Collection<string, NaticoButton>;
@@ -18,7 +18,7 @@ export class NaticoButtonHandler<T extends NaticoClient> extends NaticoHandler<T
   }
   start() {
     this.client.on("interactionCreate", async (data: ComponentInteraction, member: DiscordenoMember) => {
-      if (data.type === DiscordInteractionTypes.MessageComponent) {
+      if (data.type === InteractionTypes.MessageComponent) {
         const iDontKnowAnameForThis = data.data?.customId.split("-");
         if (!iDontKnowAnameForThis) return;
         const button = this.findButton(iDontKnowAnameForThis.shift());

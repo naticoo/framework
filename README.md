@@ -10,6 +10,10 @@ Natico is designed to be a low level and extendable framework for [Discordeno](h
 
 ## Simple setup
 
+### Normal natico
+
+you will have to apply the plugins manually using the naticoclient.plugn() function
+
 ```ts
 import { NaticoClient, NaticoClientOptions, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
 class BotClient extends NaticoClient {
@@ -32,13 +36,47 @@ const botClient = new BotClient({
 botClient.start();
 ```
 
+### Using plugins
+
+```ts
+import { enableNaticoPlugin, NaticoBot, NaticoPluginOptions, withPlugins } from "../src/plugins/NaticoPlugin.ts";
+import { enableCachePlugin, enableCacheSweepers } from "https://deno.land/x/discordeno_cache_plugin@0.0.9/mod.ts";
+
+const pluginOps: NaticoPluginOptions = {
+  commandHandler: {
+    directory: "examples/template/commands",
+    prefix: "!",
+  },
+};
+
+const bot = withPlugins<NaticoBot<any>>(
+  //@ts-ignore -
+  {
+    token: Deno.env.get("DISCORD_TOKEN")!,
+    intents: ["Guilds", "GuildMessages"],
+    botId: BigInt(Deno.env.get("BOT_ID")!),
+    cache: {
+      isAsync: false,
+    },
+  },
+  [enableNaticoPlugin, pluginOps],
+  enableCachePlugin,
+  enableCacheSweepers
+);
+async function startUp() {
+  await bot.commandHandler.loadALL();
+  return await bot.login();
+}
+startUp();
+```
+
 ### Features
 
 - flexible
   - Natico is built using classes allowing you to extend everything and add
     features to your liking
 - Command handling
-  - Natico has great command handling with slash command support on its way
+  - Natico is a slashcommand only framework
 - Listeners
   - Natico comes included with a listener(events) handler which makes it very
     easy to use events

@@ -8,7 +8,7 @@ const pluginOps: NaticoPluginOptions = {
   },
 };
 
-const bot = withPlugins<NaticoBot>(
+const bot = withPlugins<NaticoBot<any>>(
   //@ts-ignore -
   {
     token: Deno.env.get("DISCORD_TOKEN")!,
@@ -17,20 +17,11 @@ const bot = withPlugins<NaticoBot>(
     cache: {
       isAsync: false,
     },
-    events: {
-      ready() {
-        console.log("Successfully connected to gateway");
-      },
-      messageCreate(_bot, message) {
-        // Process the message with your command handler here
-      },
-    },
   },
   [enableNaticoPlugin, pluginOps],
   enableCachePlugin,
   enableCacheSweepers
 );
-console.log(bot.cache);
 async function startUp() {
   await bot.commandHandler.loadALL();
   return await bot.login();

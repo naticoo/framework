@@ -4,7 +4,7 @@ import { NaticoTask } from "./Task.ts";
 import { Collection } from "../../../deps.ts";
 import { TaskHandlerEvents } from "../../util/Constants.ts";
 export class NaticoTaskHandler<T extends NaticoClient> extends NaticoHandler<T> {
-  declare modules: Collection<string, NaticoTask>;
+  declare modules: Collection<string, NaticoTask<T>>;
   directory: string;
 
   constructor(client: T, { directory }: { directory: string }) {
@@ -15,7 +15,7 @@ export class NaticoTaskHandler<T extends NaticoClient> extends NaticoHandler<T> 
     this.modules = new Collection();
   }
 
-  register(task: NaticoTask, filepath: string) {
+  register(task: NaticoTask<T>, filepath: string) {
     task.client = this.client;
     if (task.runOnStart) {
       try {

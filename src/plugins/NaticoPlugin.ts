@@ -1,14 +1,4 @@
-import {
-  Bot,
-  Cache,
-  startBot,
-  AsyncCache,
-  CreateBotOptions,
-  createBot,
-  EventEmitter,
-  EventHandlers,
-  Collection,
-} from "../../deps.ts";
+import { Bot, startBot, CreateBotOptions, createBot, EventEmitter, EventHandlers, Collection } from "../../deps.ts";
 import {
   NaticoButtonHandler,
   NaticoClient,
@@ -27,7 +17,7 @@ export interface NaticoPluginOptions {
   taskHandler?: { directory: string } | false;
 }
 
-export interface NaticoBot<C extends Cache | AsyncCache = AsyncCache | Cache> extends Bot, EventEmitter {
+export interface NaticoBot<C extends any> extends Bot, NaticoClient {
   //@ts-ignore -
   commandHandler: NaticoCommandHandler<NaticoBot>;
   //@ts-ignore -
@@ -38,14 +28,13 @@ export interface NaticoBot<C extends Cache | AsyncCache = AsyncCache | Cache> ex
   listenerHandler: NaticoListenerHandler<NaticoBot>;
   //@ts-ignore -
   taskHandler: NaticoTaskHandler<NaticoBot>;
-  login: () => Promise<void>;
 }
 
 // PLUGINS MUST TAKE A BOT ARGUMENT WHICH WILL BE MODIFIED
 export function enableNaticoPlugin(
-  inputBot: Partial<NaticoBot> & Bot,
+  inputBot: Partial<NaticoBot<any>> & Bot,
   naticoOptions: NaticoPluginOptions
-): NaticoBot & EventEmitter {
+): NaticoBot<any> & NaticoClient {
   //@ts-ignore -
   const bot = new (class extends NaticoClient {})({ intents: [], cache: { isAsync: false } }) as any;
   Object.assign(bot, inputBot);
@@ -65,23 +54,12 @@ export function enableNaticoPlugin(
     bot.listenerHandler = new NaticoListenerHandler(bot, naticoOptions.listenerHandler);
   //@ts-ignore -
   if (naticoOptions.taskHandler) bot.taskHandler = new NaticoTaskHandler(bot, naticoOptions.taskHandler);
-  // bot.superOn = bot.on;
-  // bot.addEvent = function (event: keyof EventHandlers) {
-  //   //Removing the first argument since thats the bot every time!
-  //   bot.events[event] = (...args: unknown[]) => this.emit(event, ...args.slice(1));
-  //   console.log(bot.events[event]);
-  // };
-  // bot.on = function (eventName, listener) {
-  //   bot.addEvent(eventName.toString() as keyof EventHandlers);
-  //   return bot.superOn(eventName, listener);
-  // };
-  // bot.login = async function () {
-  //   return await startBot(bot);
-  // };
+
   return bot as unknown as any;
 }
+
 //@ts-ignore -
-export function withPlugins<T = any>(botOptions: CreateBotOptions<CacheOptions>, ...plugins: any): T {
+export function withPlugins<T = any>(botOptions: CreateBotOptions<CacheOptions>, ...plugins: WithPluginsArgs[]): T {
   let bot = createBot(botOptions);
   for (const plugin of plugins) {
     if (Array.isArray(plugin)) {
