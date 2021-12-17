@@ -12,14 +12,18 @@ Natico is designed to be a low level and extendable framework for [Discordeno](h
 
 <table>
   <tr>
-    <th>Normal natico</th>
-    <th>Using the natico plugin</th>
+    <td style="width: 50%">Normal natico</td>
+    <td>Using the natico plugin</td>
   </tr>
     <tr>
-      <th>
-
+      <td style="width: 50%">
+        
 ```ts
-import { NaticoClient, NaticoClientOptions, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
+import { 
+         NaticoClient, 
+         NaticoClientOptions, 
+         NaticoCommandHandler 
+} from "https://deno.land/x/natico/mod.ts";
 class BotClient extends NaticoClient {
   constructor(public options: NaticoClientOptions) {
     super(options);
@@ -39,12 +43,14 @@ const botClient = new BotClient({
 });
 botClient.start();
 ```
-
+        
 you will have to apply the plugins manually using the naticoclient.plugn() function
-
-  </th>
-  <th>
-
+        
+        
+  </td>
+  <td>
+    
+    
 ```ts
 import { enableNaticoPlugin, NaticoBot, NaticoPluginOptions, withPlugins } from "../src/plugins/NaticoPlugin.ts";
 import { enableCachePlugin, enableCacheSweepers } from "https://deno.land/x/discordeno_cache_plugin@0.0.9/mod.ts";
@@ -77,7 +83,7 @@ async function startUp() {
 startUp();
 ```
 
-  </th>
+  </td>
 </tr>
 </table>
 
