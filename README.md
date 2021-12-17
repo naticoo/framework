@@ -10,9 +10,13 @@ Natico is designed to be a low level and extendable framework for [Discordeno](h
 
 ## Simple setup
 
-### Normal natico
-
-you will have to apply the plugins manually using the naticoclient.plugn() function
+<table>
+  <tr>
+    <th>Normal natico</th>
+    <th>Using the natico plugin</th>
+  </tr>
+    <tr>
+      <th>
 
 ```ts
 import { NaticoClient, NaticoClientOptions, NaticoCommandHandler } from "https://deno.land/x/natico/mod.ts";
@@ -36,7 +40,10 @@ const botClient = new BotClient({
 botClient.start();
 ```
 
-### Using plugins
+you will have to apply the plugins manually using the naticoclient.plugn() function
+
+  </th>
+  <th>
 
 ```ts
 import { enableNaticoPlugin, NaticoBot, NaticoPluginOptions, withPlugins } from "../src/plugins/NaticoPlugin.ts";
@@ -69,6 +76,10 @@ async function startUp() {
 }
 startUp();
 ```
+
+  </th>
+</tr>
+</table>
 
 ### Features
 
