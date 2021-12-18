@@ -423,7 +423,7 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
     if (!command) return;
     let sub: string | null = null;
     if (command?.options) {
-      if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
+      if (command?.options[0]?.type == ApplicationCommandOptionTypes.SubCommand) {
         sub = interaction?.data?.options?.[0]?.name!;
         if (interaction?.data?.options?.[0]?.options)
           for (const option of interaction.data?.options[0]?.options) {
