@@ -1,4 +1,10 @@
-import { Collection, EditGlobalApplicationCommand, DiscordenoInteraction } from "../../../deps.ts";
+import {
+  Collection,
+  EditGlobalApplicationCommand,
+  DiscordenoInteraction,
+  ApplicationCommandOptionTypes,
+  InteractionTypes,
+} from "../../../deps.ts";
 // import { NaticoCommandUtil } from "./commandUtil.ts";
 import { NaticoClient } from "../NaticoClient.ts";
 import { ArgumentGenerator, Arguments } from "./ArgumentGenerator.ts";
@@ -8,7 +14,6 @@ import { NaticoSubCommand } from "./SubCommand.ts";
 import { NaticoHandler } from "../NaticoHandler.ts";
 import { ConvertedOptions, prefixFn, ArgOptions } from "../../util/Interfaces.ts";
 import { CommandHandlerEvents } from "../../util/Constants.ts";
-import { DiscordInteractionTypes } from "https://deno.land/x/discordeno@13.0.0-rc1/src/types/mod.ts";
 export interface NaticoCommandHandlerOptions {
   directory?: string;
   prefix?: prefixFn | string | string[];
@@ -108,7 +113,7 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
   }
   start() {
     this.client.on("interactionCreate", async (data: SlashCommandInteraction) => {
-      if (data.type === DiscordInteractionTypes.ApplicationCommand) return await this.handleSlashCommand(data);
+      if (data.type === InteractionTypes.ApplicationCommand) return await this.handleSlashCommand(data);
     });
   }
 
@@ -197,7 +202,8 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
       }
 
       if (command.userPermissions) {
-        const missingPermissions = await getMissingChannelPermissions(
+        throw new Error("Permissions are not supported sorry");
+        const missingPermissions = await this.client.helpers.getMissingChannelPermissions(
           this.client,
           message!.channelId,
           message.authorId,
@@ -209,6 +215,7 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
         }
       }
       if (command.clientPermissions) {
+        throw new Error("Permissions are not supported sorry");
         const missingPermissions = await getMissingChannelPermissions(
           this.client,
           message!.channelId,
@@ -255,7 +262,7 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
       let savedOptions: ArgOptions[] | undefined = undefined;
 
       if (command?.options && args) {
-        if (command?.options[0]?.type == DiscordApplicationCommandOptionTypes.SubCommand) {
+        if (command?.options[0]?.type == ApplicationCommandOptionTypes.SubCommand) {
           //Thing needs to be defined to not cause mutation
           const thing = args.split(" ")[0].toLowerCase();
 
