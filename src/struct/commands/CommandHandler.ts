@@ -371,7 +371,7 @@ export class NaticoCommandHandler<T extends NaticoClient> extends NaticoHandler<
    */
   async enableSlash(guildID?: bigint) {
     const slashed = this.slashed();
-    await upsertSlashCommands(this.client, slashed, guildID);
+    await this.client.helpers.upsertApplicationCommands(slashed, guildID);
     return slashed;
   }
   slashed(): any {
