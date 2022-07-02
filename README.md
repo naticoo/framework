@@ -1,3 +1,5 @@
+# DEPRECATED USE [oasis](https://github.com/yuzudev/oasis) instead and make sure to star the oasis repo!
+
 <img align="right" src="https://avatars.githubusercontent.com/u/85624930?s=200&v=4" height="150px" style=" border-radius: 8px;">
 
 # Natico
